@@ -36,6 +36,9 @@ export default tseslint.config(
 				'warn',
 				{ allowConstantExport: true },
 			],
+
+			// Disabling some rules.
+			'@typescript-eslint/no-misused-promises': 'off', // Beacuse harder to use asyn function with React listners. https://github.com/typescript-eslint/typescript-eslint/issues/4619
 		},
 	},
 );
