@@ -9,12 +9,20 @@ export interface User {
 	lastName: string;
 	gender: string;
 	birthDate: Date;
-	jobTitle: string;
-	phone: string;
+	jobTitle?: string;
+	phone?: string;
 	email: string;
-	address: string;
+	address?: string;
 	city: string;
 	country: string;
+}
+
+export interface MultiUserApiResponse {
+	users: User[];
+}
+
+export interface SingleUserApiResponse {
+	user: User;
 }
 
 // This error thrown just beacuse we are using non react items in React app.
@@ -37,6 +45,10 @@ export default function createMockServer() {
 
 		factories: {
 			user: Factory.extend<Partial<User>>({
+				id(i) {
+					faker.seed(i);
+					return faker.string.uuid();
+				},
 				firstName(i) {
 					faker.seed(i);
 					return faker.person.firstName();

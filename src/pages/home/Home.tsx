@@ -1,50 +1,51 @@
-import { useCallback } from 'react';
 import Button from '@mui/material/Button';
-import axios from 'axios';
 
-import { User } from '../../services/mockServer/server';
+import { useAppDispatch, useAppSelector } from '../../services/redux/hooks';
+import {
+	usersActions,
+	usersSelectors,
+} from '../../services/redux/slices/users/usersSlice';
+import { getUserById } from '../../services/api/users';
+
+import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite';
+import 'react-json-view-lite/dist/index.css';
+import { faker } from '@faker-js/faker';
+
+const exampleUser = {
+	id: faker.string.uuid(),
+	firstName: 'James',
+	lastName: 'Anderson',
+	gender: 'Male',
+	birthDate: new Date('1990/10/05'),
+	jobTitle: 'Developer',
+	phone: '0764859475',
+	email: 'james@gmail.com',
+	address: 'Main Street',
+	city: 'London',
+	country: 'UK',
+};
 
 export default function Home() {
-	const getAllUsers = useCallback(() => {
-		return axios.get<{ users: User[] }>('/api/users').then((res) => {
-			return res.data;
-		});
-	}, []);
+	const dispatch = useAppDispatch();
 
-	const getUserById = useCallback((userId: number) => {
-		return axios.get<{ user: User }>(`/api/users/${userId}`).then((res) => {
-			return res.data;
-		});
-	}, []);
-
-	const addUser = useCallback((userData: User) => {
-		return axios.post<{ user: User }>('/api/users', userData).then((res) => {
-			return res.data;
-		});
-	}, []);
-
-	const editUser = useCallback((userId: number, userData: User) => {
-		return axios
-			.patch<{ user: User }>(`/api/users/${userId}`, userData)
-			.then((res) => {
-				return res.data;
-			});
-	}, []);
-
-	const deleteUser = useCallback((userId: number) => {
-		return axios.delete<{ user: User }>(`/api/users/${userId}`).then((res) => {
-			return res.data;
-		});
-	}, []);
+	const selectGetAllUsersReqState = useAppSelector(
+		usersSelectors.selectGetAllUsersReqState,
+	);
 
 	return (
 		<>
 			<h1>Zuvo HR Lite</h1>
 
+			<JsonView
+				data={selectGetAllUsersReqState}
+				shouldExpandNode={allExpanded}
+				style={defaultStyles}
+			/>
+
 			<Button
 				variant='contained'
 				onClick={async () => {
-					const users = await getAllUsers();
+					const users = await dispatch(usersActions.getAllUsers());
 					console.log('All Users', users);
 				}}>
 				Get All Users
@@ -53,7 +54,9 @@ export default function Home() {
 			<Button
 				variant='contained'
 				onClick={async () => {
-					const user = await getUserById(2);
+					const user = await getUserById({
+						userId: '6b042125-686a-43e0-8a68-23cf5bee102e',
+					});
 					console.log('Get User By Id', user);
 				}}>
 				Get User By Id
@@ -62,7 +65,9 @@ export default function Home() {
 			<Button
 				variant='contained'
 				onClick={async () => {
-					const addedUser = await addUser(3);
+					const addedUser = await dispatch(
+						usersActions.addUser({ userData: exampleUser }),
+					);
 					console.log('Added User', addedUser);
 				}}>
 				Add User
@@ -71,7 +76,14 @@ export default function Home() {
 			<Button
 				variant='contained'
 				onClick={async () => {
-					const editedUser = await editUser(4, { firstName: 'APPLE' });
+					const editedUser = await dispatch(
+						usersActions.editUser({
+							userId: '6b042125-686a-43e0-8a68-23cf5bee102e',
+							userData: {
+								firstName: 'ABCDEFG',
+							},
+						}),
+					);
 					console.log('Edited User', editedUser);
 				}}>
 				Edit User
@@ -80,7 +92,11 @@ export default function Home() {
 			<Button
 				variant='contained'
 				onClick={async () => {
-					const deletedUser = await deleteUser(2);
+					const deletedUser = await dispatch(
+						usersActions.deleteUser({
+							userId: 'f8fbb3f0-46c3-4df2-a906-0f6fcd2192b6',
+						}),
+					);
 					console.log('Deleted User', deletedUser);
 				}}>
 				Delete User
