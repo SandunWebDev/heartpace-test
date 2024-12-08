@@ -1,3 +1,13 @@
 .Home {
 	margin: 30px;
 }
+
+.UsersTable__TableHead__tableCellInnerContainer {
+	display: flex;
+	width: 100%;
+	user-select: none;
+	white-space: break-spaces;
+}
+.UsersTable__TableHead__tableCellInnerContainer--sortableColumn {
+	cursor: pointer;
+}
