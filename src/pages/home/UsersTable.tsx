@@ -1,25 +1,49 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState, useCallback } from 'react';
 import {
+	Column,
 	ColumnDef,
+	ColumnFiltersState,
+	RowData,
 	flexRender,
 	getCoreRowModel,
 	getSortedRowModel,
+	getFilteredRowModel,
+	getFacetedRowModel,
+	getFacetedUniqueValues,
+	getFacetedMinMaxValues,
 	useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import { format } from 'date-fns';
 import clsx from 'clsx';
+import debounce from 'lodash/debounce';
 
 import { User } from '../../services/mockServer/server';
 
+declare module '@tanstack/react-table' {
+	// Types that allows us to define custom properties for our columns in "meta" property.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	interface ColumnMeta<TData extends RowData, TValue> {
+		filterVariant?: 'text' | 'range';
+	}
+}
+
 interface UsersTableProps {
 	userList: User[];
+}
+
+function birthDateStringFormatter(birthDate: string) {
+	const date = new Date(birthDate);
+	return format(date, 'yyyy-MM-dd');
 }
 
 export default function UsersTable({ userList }: UsersTableProps) {
@@ -27,7 +51,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 		() => [
 			// This column is only for debug purposes.
 			{
-				accessorKey: '#',
+				id: 'itemIndex',
 				header: () => <span>#</span>,
 				cell: (info) => {
 					return info.row.index + 1;
@@ -68,11 +92,21 @@ export default function UsersTable({ userList }: UsersTableProps) {
 				accessorKey: 'birthDate',
 				header: () => <span>Birth Date</span>,
 				cell: (info) => {
-					const date = new Date(info.getValue() as string);
-					return format(date, 'yyyy/MM/dd');
+					return birthDateStringFormatter(info.getValue() as string);
 				},
 				sortingFn: 'datetime',
 				sortUndefined: -1,
+			},
+			{
+				accessorKey: 'age',
+				header: () => <span>Age</span>,
+				cell: (info) => info.getValue(),
+				size: 250,
+				sortingFn: 'alphanumericCaseSensitive',
+				sortUndefined: -1, // Sorting "undefined/null" first in ascending order.
+				meta: {
+					filterVariant: 'range',
+				},
 			},
 			{
 				accessorKey: 'jobTitle',
@@ -126,13 +160,23 @@ export default function UsersTable({ userList }: UsersTableProps) {
 		[],
 	);
 
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
 	const table = useReactTable({
 		data: userList,
 		columns,
+		state: {
+			columnFilters,
+		},
+		onColumnFiltersChange: setColumnFilters,
+		sortDescFirst: false, // Sort by all columns in ascending order first (Default is ascending for string columns and descending for number columns)
+
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-		sortDescFirst: false, // Sort by all columns in ascending order first (Default is ascending for string columns and descending for number columns)
-		debugTable: process.env.NODE_ENV === 'development',
+		getFilteredRowModel: getFilteredRowModel(),
+		getFacetedRowModel: getFacetedRowModel(),
+		getFacetedUniqueValues: getFacetedUniqueValues(),
+		getFacetedMinMaxValues: getFacetedMinMaxValues(),
 	});
 
 	const { rows } = table.getRowModel();
@@ -186,23 +230,31 @@ export default function UsersTable({ userList }: UsersTableProps) {
 												width: header.getSize(),
 											}}
 											variant='head'>
-											<div
-												onClick={header.column.getToggleSortingHandler()}
-												className={clsx(
-													'UsersTable__TableHead__tableCellInnerContainer',
-													{
-														'UsersTable__TableHead__tableCellInnerContainer--sortableColumn':
-															header.column.getCanSort(),
-													},
-												)}>
-												{flexRender(
-													header.column.columnDef.header,
-													header.getContext(),
-												)}
-												{{
-													asc: ' 🔼',
-													desc: ' 🔽',
-												}[header.column.getIsSorted() as string] ?? null}
+											<div style={{ width: '100%' }}>
+												<div
+													onClick={header.column.getToggleSortingHandler()}
+													className={clsx(
+														'UsersTable__TableHead__columnSortContainer',
+														{
+															'UsersTable__TableHead__columnSortContainer--sortable':
+																header.column.getCanSort(),
+														},
+													)}>
+													{flexRender(
+														header.column.columnDef.header,
+														header.getContext(),
+													)}
+													{{
+														asc: ' 🔼',
+														desc: ' 🔽',
+													}[header.column.getIsSorted() as string] ?? null}
+												</div>
+
+												<div>
+													{header.column.getCanFilter() ? (
+														<ColumnFilter column={header.column} />
+													) : null}
+												</div>
 											</div>
 										</TableCell>
 									);
@@ -254,4 +306,128 @@ export default function UsersTable({ userList }: UsersTableProps) {
 			</TableContainer>
 		</div>
 	);
+}
+
+function ColumnFilter({ column }: { column: Column<any, unknown> }) {
+	const { filterVariant } = column.columnDef.meta ?? {};
+
+	const columnFilterValue = column.getFilterValue();
+
+	const sortedUniqueValues = useMemo(
+		() =>
+			Array.from(column.getFacetedUniqueValues().keys())
+				.sort()
+				.slice(0, 2000)
+				.filter((n) => n), // Remove null, undefined values
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[column.getFacetedUniqueValues(), filterVariant],
+	);
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react-hooks/exhaustive-deps
+	const debouncedSetFacetedUniqueFilterValue = useCallback(
+		debounce((changedValue: string | number) => {
+			column.setFilterValue(changedValue);
+		}, 200),
+		[],
+	);
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react-hooks/exhaustive-deps
+	const debouncedSetFacetedMinMaxFilterMinValue = useCallback(
+		debounce((changedValue: string | number) => {
+			column.setFilterValue((old: [number, number]) => [
+				changedValue,
+				old?.[1],
+			]);
+		}, 200),
+		[],
+	);
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react-hooks/exhaustive-deps
+	const debouncedSetFacetedMinMaxFilterMaxValue = useCallback(
+		debounce((changedValue: string | number) => {
+			column.setFilterValue((old: [number, number]) => [
+				old?.[0],
+				changedValue,
+			]);
+		}, 200),
+		[],
+	);
+
+	if (filterVariant === 'range') {
+		return (
+			<Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+				<Autocomplete
+					freeSolo
+					fullWidth
+					size='small'
+					value={(columnFilterValue as [number, number])?.[0] ?? ''}
+					options={[]}
+					onChange={(_e, changedValue) => {
+						return debouncedSetFacetedMinMaxFilterMinValue(changedValue ?? '');
+					}}
+					onInputChange={(_e, changedValue) => {
+						return debouncedSetFacetedMinMaxFilterMinValue(changedValue);
+					}}
+					renderInput={(params) => (
+						<TextField {...params} type='number' placeholder={`Min`} />
+					)}
+				/>
+				{'	: '}
+				<Autocomplete
+					freeSolo
+					fullWidth
+					size='small'
+					value={(columnFilterValue as [number, number])?.[1] ?? ''}
+					options={[]}
+					onChange={(_e, changedValue) => {
+						return debouncedSetFacetedMinMaxFilterMaxValue(changedValue ?? '');
+					}}
+					onInputChange={(_e, changedValue) => {
+						return debouncedSetFacetedMinMaxFilterMaxValue(changedValue);
+					}}
+					renderInput={(params) => (
+						<TextField {...params} type='number' placeholder={`Max`} />
+					)}
+				/>
+			</Box>
+		);
+	}
+	// "text" type. Which is the default.
+	else {
+		return (
+			<Autocomplete
+				freeSolo
+				fullWidth
+				size='small'
+				value={columnFilterValue ?? ''}
+				options={sortedUniqueValues}
+				renderOption={(props, option, ...b) => {
+					// This is needed beacuse we need to show "birthDate" column value in easy human readable format.
+					// Don't use similar "getOptionLabel" for this. Beacuse it add bugs to search result.
+						
+					const { key, ...remainingProps } = props;
+
+					let formattedOption;
+					const columnName = column.id;
+					if (columnName === 'birthDate' && option) {
+						formattedOption = birthDateStringFormatter(option as string);
+					} else {
+						formattedOption = option as string;
+					}
+					return (
+						<Box key={key} {...remainingProps}>
+							{formattedOption}
+						</Box>
+					);
+				}}
+				onChange={(_e, changedValue) => {
+					return column.setFilterValue(changedValue);
+				}}
+				onInputChange={(_e, changedValue) => {
+					return debouncedSetFacetedUniqueFilterValue(changedValue);
+				}}
+				renderInput={(params) => <TextField {...params} />}
+			/>
+		);
+	}
 }

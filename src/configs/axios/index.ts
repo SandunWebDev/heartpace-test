@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleAxiosError(error: any): string {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 	return (error?.response?.data?.message ||
@@ -10,6 +9,7 @@ function handleAxiosError(error: any): string {
 }
 
 export default function initializeAxios() {
+	// Adding axios global interceptor.
 	axios.interceptors.response.use(
 		(response) => response,
 		(error: AxiosError) => {

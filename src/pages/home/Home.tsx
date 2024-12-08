@@ -48,6 +48,7 @@ export default function Home() {
 			<h1>Zuvo HR Lite</h1>
 
 			<JsonView
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				data={selectGetAllUsersReqState}
 				shouldExpandNode={allExpanded}
 				style={defaultStyles}
