@@ -13,6 +13,8 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { format } from 'date-fns';
+import clsx from 'clsx';
 
 import { User } from '../../services/mockServer/server';
 
@@ -23,6 +25,7 @@ interface UsersTableProps {
 export default function UsersTable({ userList }: UsersTableProps) {
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
+			// This column is only for debug purposes.
 			{
 				accessorKey: '#',
 				header: () => <span>#</span>,
@@ -30,71 +33,94 @@ export default function UsersTable({ userList }: UsersTableProps) {
 					return info.row.index + 1;
 				},
 				size: 45,
+				enableSorting: false,
 			},
 			{
 				accessorKey: 'id',
 				header: () => <span>ID</span>,
 				cell: (info) => info.getValue(),
 				size: 310,
+				sortingFn: 'alphanumericCaseSensitive',
 			},
 			{
 				accessorKey: 'firstName',
 				header: () => <span>First Name</span>,
 				cell: (info) => info.getValue(),
+				sortingFn: 'alphanumericCaseSensitive',
+				sortUndefined: -1, // Sorting "undefined/null" first in ascending order.
 			},
 			{
 				accessorKey: 'lastName',
 				header: () => <span>Last Name</span>,
 				cell: (info) => info.getValue(),
+				sortingFn: 'textCaseSensitive',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'gender',
 				header: () => <span>Gender</span>,
 				cell: (info) => info.getValue(),
 				size: 330,
+				sortingFn: 'textCaseSensitive',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'birthDate',
 				header: () => <span>Birth Date</span>,
 				cell: (info) => {
-					return new Date(info.getValue() as string).toDateString();
+					const date = new Date(info.getValue() as string);
+					return format(date, 'yyyy/MM/dd');
 				},
+				sortingFn: 'datetime',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'jobTitle',
 				header: () => <span>Job Title</span>,
 				cell: (info) => info.getValue(),
 				size: 250,
+				sortingFn: 'textCaseSensitive',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'phone',
 				header: () => <span>Phone</span>,
 				cell: (info) => info.getValue(),
 				size: 200,
+				sortingFn: 'alphanumericCaseSensitive',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'email',
 				header: () => <span>Email</span>,
 				cell: (info) => info.getValue(),
 				size: 300,
+				sortingFn: 'alphanumericCaseSensitive',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'address',
 				header: () => <span>Address</span>,
 				cell: (info) => info.getValue(),
 				size: 250,
+				sortingFn: 'alphanumericCaseSensitive',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'city',
 				header: () => <span>City</span>,
 				cell: (info) => info.getValue(),
 				size: 200,
+				sortingFn: 'textCaseSensitive',
+				sortUndefined: -1,
 			},
 			{
 				accessorKey: 'country',
 				header: () => <span>Country</span>,
 				cell: (info) => info.getValue(),
 				size: 200,
+				sortingFn: 'textCaseSensitive',
+				sortUndefined: -1,
 			},
 		],
 		[],
@@ -105,6 +131,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
+		sortDescFirst: false, // Sort by all columns in ascending order first (Default is ascending for string columns and descending for number columns)
 		debugTable: process.env.NODE_ENV === 'development',
 	});
 
@@ -126,11 +153,11 @@ export default function UsersTable({ userList }: UsersTableProps) {
 	});
 
 	return (
-		<div>
+		<div className='UsersTable'>
 			<h1>Users Table</h1>
 
 			<TableContainer
-				className='usersTableContainer'
+				className='UsersTableContainer'
 				ref={tableContainerRef}
 				sx={{
 					overflow: 'auto', // our scrollable table container
@@ -160,12 +187,14 @@ export default function UsersTable({ userList }: UsersTableProps) {
 											}}
 											variant='head'>
 											<div
-												{...{
-													className: header.column.getCanSort()
-														? 'cursor-pointer select-none'
-														: '',
-													onClick: header.column.getToggleSortingHandler(),
-												}}>
+												onClick={header.column.getToggleSortingHandler()}
+												className={clsx(
+													'UsersTable__TableHead__tableCellInnerContainer',
+													{
+														'UsersTable__TableHead__tableCellInnerContainer--sortableColumn':
+															header.column.getCanSort(),
+													},
+												)}>
 												{flexRender(
 													header.column.columnDef.header,
 													header.getContext(),

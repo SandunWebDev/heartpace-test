@@ -10,7 +10,7 @@ export interface User {
 	gender: string;
 	birthDate: Date;
 	jobTitle?: string;
-	phone?: string;
+	phone?: string | null;
 	email: string;
 	address?: string;
 	city: string;
@@ -67,11 +67,22 @@ export default function createMockServer() {
 				},
 				jobTitle(i) {
 					faker.seed(i);
-					return faker.person.jobTitle();
+
+					// NOTE : Using "maybe" to return some entry without job titles. (As undefined)
+					return faker.helpers.maybe(() => faker.person.jobTitle(), {
+						probability: 0.9,
+					});
 				},
 				phone(i) {
 					faker.seed(i);
-					return faker.phone.number();
+
+					// NOTE : Using "arrayElement" to return some entry without phone number. (As null)
+					return faker.helpers.arrayElement([
+						faker.phone.number(),
+						faker.phone.number(),
+						faker.phone.number(),
+						null,
+					]);
 				},
 				email(i) {
 					faker.seed(i);
