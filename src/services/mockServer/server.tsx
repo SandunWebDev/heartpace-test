@@ -93,7 +93,7 @@ export default function createMockServer() {
 		},
 
 		seeds(server) {
-			for (let i = 0; i < 5; i++) {
+			for (let i = 0; i < 500; i++) {
 				server.create('user');
 			}
 

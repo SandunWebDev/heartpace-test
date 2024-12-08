@@ -18,6 +18,8 @@
 		"@mui/icons-material": "^6.1.10",
 		"@mui/material": "^6.1.10",
 		"@reduxjs/toolkit": "^2.4.0",
+		"@tanstack/react-table": "^8.20.5",
+		"@tanstack/react-virtual": "^3.11.0",
 		"axios": "^1.7.9",
 		"eslint-plugin-react": "^7.37.2",
 		"react": "^18.3.1",

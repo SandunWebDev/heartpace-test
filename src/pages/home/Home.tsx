@@ -1,4 +1,8 @@
+import { useEffect } from 'react';
 import Button from '@mui/material/Button';
+import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite';
+import 'react-json-view-lite/dist/index.css';
+import { faker } from '@faker-js/faker';
 
 import { useAppDispatch, useAppSelector } from '../../services/redux/hooks';
 import {
@@ -6,10 +10,9 @@ import {
 	usersSelectors,
 } from '../../services/redux/slices/users/usersSlice';
 import { getUserById } from '../../services/api/users';
+import UsersTable from './UsersTable';
 
-import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite';
-import 'react-json-view-lite/dist/index.css';
-import { faker } from '@faker-js/faker';
+import './Home.css';
 
 const exampleUser = {
 	id: faker.string.uuid(),
@@ -27,11 +30,19 @@ const exampleUser = {
 
 export default function Home() {
 	const dispatch = useAppDispatch();
+	const { userList } = useAppSelector(usersSelectors.selectGetAllUsersReqState);
 
-	const selectGetAllUsersReqState = useAppSelector(
-		usersSelectors.selectGetAllUsersReqState,
+	useEffect(() => {
+		dispatch(usersActions.getAllUsers());
+	}, [dispatch]);
+
+	return (
+		<div className='Home'>
+			<UsersTable userList={userList} />
+		</div>
 	);
 
+	// Temporary code that will be used later.
 	return (
 		<>
 			<h1>Zuvo HR Lite</h1>

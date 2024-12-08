@@ -39,6 +39,7 @@ export default tseslint.config(
 
 			// Disabling some rules.
 			'@typescript-eslint/no-misused-promises': 'off', // Beacuse harder to use asyn function with React listners. https://github.com/typescript-eslint/typescript-eslint/issues/4619
+			'@typescript-eslint/no-floating-promises': 'off',
 		},
 	},
 );
