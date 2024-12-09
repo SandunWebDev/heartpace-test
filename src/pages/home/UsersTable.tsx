@@ -46,6 +46,7 @@ import debounce from 'lodash/debounce';
 import { User } from '../../services/mockServer/server';
 import { FetchStatus } from '../../services/redux/types';
 import AddEditUserFormDialog from './AddEditUserFormDialog';
+import DeleteUserFormDialog from './DeleteUserFormDialog';
 
 declare module '@tanstack/react-table' {
 	// Types that allows us to define custom properties for our columns in "meta" property.
@@ -108,6 +109,12 @@ export default function UsersTable({
 		useState(false);
 	const [editUserCurrentData, setEditUserCurrentData] = useState(null);
 
+	const [
+		deleteUserFormDialogOpenStatus,
+		setDeleteEditUserFormDialogOpenStatus,
+	] = useState(false);
+	const [deleteUserCurrentId, setDeleteUserCurrentId] = useState(null);
+
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
 			{
@@ -123,14 +130,17 @@ export default function UsersTable({
 
 										return info.row.original;
 									});
-
-									setAddEditUserFormDialogOpenStatus(() => {
-										return true;
-									});
 								}}>
 								<EditIcon />
 							</IconButton>
-							<IconButton aria-label='delete'>
+							<IconButton
+								onClick={() => {
+									setDeleteUserCurrentId(() => {
+										setDeleteEditUserFormDialogOpenStatus(true);
+
+										return info.row.original.id;
+									});
+								}}>
 								<DeleteIcon />
 							</IconButton>
 						</Box>
@@ -312,6 +322,14 @@ export default function UsersTable({
 				open={addEditUserFormDialogOpenStatus}
 				onClose={() => {
 					setAddEditUserFormDialogOpenStatus(false);
+				}}
+			/>
+
+			<DeleteUserFormDialog
+				deleteUserCurrentId={deleteUserCurrentId}
+				open={deleteUserFormDialogOpenStatus}
+				onClose={() => {
+					setDeleteEditUserFormDialogOpenStatus(false);
 				}}
 			/>
 
