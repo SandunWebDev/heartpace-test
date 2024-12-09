@@ -4,7 +4,10 @@ import {
 	ColumnDef,
 	ColumnFiltersState,
 	RowData,
+	FilterFn,
+	SortingFn,
 	flexRender,
+	sortingFns,
 	getCoreRowModel,
 	getSortedRowModel,
 	getFilteredRowModel,
@@ -14,6 +17,11 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import {
+	rankItem,
+	compareItems,
+	RankingInfo,
+} from '@tanstack/match-sorter-utils';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -23,6 +31,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import InputAdornment from '@mui/material/InputAdornment';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import debounce from 'lodash/debounce';
@@ -35,15 +46,48 @@ declare module '@tanstack/react-table' {
 	interface ColumnMeta<TData extends RowData, TValue> {
 		filterVariant?: 'text' | 'range';
 	}
-}
 
-interface UsersTableProps {
-	userList: User[];
+	// Add fuzzy filter to the filterFns list
+	interface FilterFns {
+		fuzzy: FilterFn<unknown>;
+	}
+	interface FilterMeta {
+		itemRank: RankingInfo;
+	}
 }
 
 function birthDateStringFormatter(birthDate: string) {
 	const date = new Date(birthDate);
 	return format(date, 'yyyy-MM-dd');
+}
+
+// Custom Fuzzy Filter to filter globally.
+// It filter and sort by the rank information of "rankItem Lib" store the ranking information in the meta data of the row, and return whether the item passed the ranking criteria.
+// Essentially this can be used to filter row by their closest matches to the search query.
+export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+	const itemRank = rankItem(row.getValue(columnId), value as string);
+	addMeta({ itemRank }); // Store the itemRank info
+	return itemRank.passed; // Return if the item should be filtered in/out
+};
+
+// Custom sroting function to be used with above fuzzyFilter ranking data.
+export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
+	let dir = 0;
+
+	// Only sort by rank if the column has ranking information
+	if (rowA.columnFiltersMeta[columnId]) {
+		dir = compareItems(
+			rowA.columnFiltersMeta[columnId]?.itemRank,
+			rowB.columnFiltersMeta[columnId]?.itemRank,
+		);
+	}
+
+	// Provide an alphanumeric fallback for when the item ranks are equal
+	return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
+};
+
+interface UsersTableProps {
+	userList: User[];
 }
 
 export default function UsersTable({ userList }: UsersTableProps) {
@@ -161,15 +205,23 @@ export default function UsersTable({ userList }: UsersTableProps) {
 	);
 
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [globalFilter, setGlobalFilter] = useState('');
 
 	const table = useReactTable({
 		data: userList,
 		columns,
 		state: {
 			columnFilters,
+			globalFilter,
 		},
-		onColumnFiltersChange: setColumnFilters,
+		filterFns: {
+			// Define  filter functions that can be used in column definitions
+			fuzzy: fuzzyFilter,
+		},
+		globalFilterFn: 'fuzzy', // Aapply our custom fuzzy filter to the global filter
 		sortDescFirst: false, // Sort by all columns in ascending order first (Default is ascending for string columns and descending for number columns)
+		onColumnFiltersChange: setColumnFilters,
+		onGlobalFilterChange: setGlobalFilter,
 
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -199,6 +251,21 @@ export default function UsersTable({ userList }: UsersTableProps) {
 	return (
 		<div className='UsersTable'>
 			<h1>Users Table</h1>
+
+			<div>
+				<div>Total Users : {userList.length}</div>
+				<div>Filtered Users : {rows.length}</div>
+			</div>
+
+			<UsersSearch
+				value={globalFilter}
+				onChange={(value) => {
+					setGlobalFilter(value);
+				}}
+				onClose={() => {
+					setGlobalFilter('');
+				}}
+			/>
 
 			<TableContainer
 				className='UsersTableContainer'
@@ -401,10 +468,11 @@ function ColumnFilter({ column }: { column: Column<any, unknown> }) {
 				size='small'
 				value={columnFilterValue ?? ''}
 				options={sortedUniqueValues}
-				renderOption={(props, option, ...b) => {
+				renderOption={(props, option) => {
 					// This is needed beacuse we need to show "birthDate" column value in easy human readable format.
 					// Don't use similar "getOptionLabel" for this. Beacuse it add bugs to search result.
-						
+
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react/prop-types
 					const { key, ...remainingProps } = props;
 
 					let formattedOption;
@@ -415,7 +483,7 @@ function ColumnFilter({ column }: { column: Column<any, unknown> }) {
 						formattedOption = option as string;
 					}
 					return (
-						<Box key={key} {...remainingProps}>
+						<Box key={key as string} {...remainingProps}>
 							{formattedOption}
 						</Box>
 					);
@@ -430,4 +498,43 @@ function ColumnFilter({ column }: { column: Column<any, unknown> }) {
 			/>
 		);
 	}
+}
+
+function UsersSearch({
+	value,
+	onChange,
+	onClose,
+}: {
+	value: string;
+	onChange: (value: string) => void;
+	onClose?: () => void;
+}) {
+	return (
+		<TextField
+			fullWidth
+			size='medium'
+			variant='filled'
+			value={value}
+			onChange={(e) => {
+				onChange(e.target.value);
+			}}
+			slotProps={{
+				input: {
+					startAdornment: (
+						<InputAdornment position='start'>
+							<PersonSearchIcon />
+						</InputAdornment>
+					),
+					endAdornment: (
+						<InputAdornment
+							position='end'
+							sx={{ display: value ? 'flex' : 'none', cursor: 'pointer' }}
+							onClick={onClose}>
+							<CloseSharpIcon />
+						</InputAdornment>
+					),
+				},
+			}}
+		/>
+	);
 }
