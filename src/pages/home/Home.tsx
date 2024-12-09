@@ -11,6 +11,7 @@ import {
 } from '../../services/redux/slices/users/usersSlice';
 import { getUserById } from '../../services/api/users';
 import UsersTable from './UsersTable';
+import AddUser from './AddUser';
 
 import './Home.css';
 
@@ -30,7 +31,8 @@ const exampleUser = {
 
 export default function Home() {
 	const dispatch = useAppDispatch();
-	const { userList } = useAppSelector(usersSelectors.selectGetAllUsersReqState);
+	const { userList, getAllUsersReqStatus, getAllUsersReqError } =
+		useAppSelector(usersSelectors.selectGetAllUsersReqState);
 
 	useEffect(() => {
 		dispatch(usersActions.getAllUsers());
@@ -38,7 +40,13 @@ export default function Home() {
 
 	return (
 		<div className='Home'>
-			<UsersTable userList={userList} />
+			<AddUser />
+
+			<UsersTable
+				userList={userList}
+				getAllUsersReqStatus={getAllUsersReqStatus}
+				getAllUsersReqError={getAllUsersReqError}
+			/>
 		</div>
 	);
 

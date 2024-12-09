@@ -34,11 +34,14 @@ import Autocomplete from '@mui/material/Autocomplete';
 import InputAdornment from '@mui/material/InputAdornment';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import debounce from 'lodash/debounce';
 
 import { User } from '../../services/mockServer/server';
+import { FetchStatus } from '../../services/redux/types';
 
 declare module '@tanstack/react-table' {
 	// Types that allows us to define custom properties for our columns in "meta" property.
@@ -88,9 +91,15 @@ export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
 
 interface UsersTableProps {
 	userList: User[];
+	getAllUsersReqStatus: FetchStatus;
+	getAllUsersReqError: string | null;
 }
 
-export default function UsersTable({ userList }: UsersTableProps) {
+export default function UsersTable({
+	userList,
+	getAllUsersReqStatus,
+	getAllUsersReqError,
+}: UsersTableProps) {
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
 			// This column is only for debug purposes.
@@ -247,6 +256,14 @@ export default function UsersTable({ userList }: UsersTableProps) {
 				: undefined,
 		overscan: 5,
 	});
+
+	if (getAllUsersReqStatus === 'LOADING') {
+		return <CircularProgress />;
+	}
+
+	if (getAllUsersReqError) {
+		return <Alert severity='error'>{getAllUsersReqError}</Alert>;
+	}
 
 	return (
 		<div className='UsersTable'>

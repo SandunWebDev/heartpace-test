@@ -3,11 +3,12 @@ import { ModelDefinition } from 'miragejs/-types';
 import Schema from 'miragejs/orm/schema';
 import { faker } from '@faker-js/faker';
 
+export type Gender = 'male' | 'female' | 'other';
 export interface User {
 	id: string;
 	firstName: string;
 	lastName: string;
-	gender: string;
+	gender: Gender;
 	birthDate: Date;
 	jobTitle?: string;
 	phone?: string | null;
@@ -59,7 +60,7 @@ export default function createMockServer() {
 				},
 				gender(i) {
 					faker.seed(i);
-					return faker.person.gender();
+					return faker.person.sex() as Gender;
 				},
 				birthDate(i) {
 					faker.seed(i);
@@ -115,6 +116,8 @@ export default function createMockServer() {
 		},
 
 		routes() {
+			this.timing = 1000; // Simulate loading times
+
 			this.get('/api/users', (schema: AppSchema) => {
 				return schema.all('user');
 			});
