@@ -31,17 +31,21 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import InputAdornment from '@mui/material/InputAdornment';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import debounce from 'lodash/debounce';
 
 import { User } from '../../services/mockServer/server';
 import { FetchStatus } from '../../services/redux/types';
+import AddEditUserFormDialog from './AddEditUserFormDialog';
 
 declare module '@tanstack/react-table' {
 	// Types that allows us to define custom properties for our columns in "meta" property.
@@ -100,8 +104,41 @@ export default function UsersTable({
 	getAllUsersReqStatus,
 	getAllUsersReqError,
 }: UsersTableProps) {
+	const [addEditUserFormDialogOpenStatus, setAddEditUserFormDialogOpenStatus] =
+		useState(false);
+	const [editUserCurrentData, setEditUserCurrentData] = useState(null);
+
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
+			{
+				id: 'actions',
+				header: () => <span></span>,
+				cell: (info) => {
+					return (
+						<Box sx={{ display: 'flex' }}>
+							<IconButton
+								onClick={() => {
+									setEditUserCurrentData(() => {
+										setAddEditUserFormDialogOpenStatus(true);
+
+										return info.row.original;
+									});
+
+									setAddEditUserFormDialogOpenStatus(() => {
+										return true;
+									});
+								}}>
+								<EditIcon />
+							</IconButton>
+							<IconButton aria-label='delete'>
+								<DeleteIcon />
+							</IconButton>
+						</Box>
+					);
+				},
+				size: 100,
+				enableSorting: false,
+			},
 			// This column is only for debug purposes.
 			{
 				id: 'itemIndex',
@@ -265,8 +302,19 @@ export default function UsersTable({
 		return <Alert severity='error'>{getAllUsersReqError}</Alert>;
 	}
 
+	console.log('AAA', editUserCurrentData);
+
 	return (
 		<div className='UsersTable'>
+			<AddEditUserFormDialog
+				formMode='EDIT'
+				editUserCurrentData={editUserCurrentData}
+				open={addEditUserFormDialogOpenStatus}
+				onClose={() => {
+					setAddEditUserFormDialogOpenStatus(false);
+				}}
+			/>
+
 			<h1>Users Table</h1>
 
 			<div>

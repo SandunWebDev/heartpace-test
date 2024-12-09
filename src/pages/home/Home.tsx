@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite';
-import 'react-json-view-lite/dist/index.css';
 import { faker } from '@faker-js/faker';
 
 import { useAppDispatch, useAppSelector } from '../../services/redux/hooks';
@@ -11,7 +12,9 @@ import {
 } from '../../services/redux/slices/users/usersSlice';
 import { getUserById } from '../../services/api/users';
 import UsersTable from './UsersTable';
-import AddUser from './AddUser';
+import AddEditUserFormDialog from './AddEditUserFormDialog';
+
+import 'react-json-view-lite/dist/index.css';
 
 import './Home.css';
 
@@ -38,9 +41,29 @@ export default function Home() {
 		dispatch(usersActions.getAllUsers());
 	}, [dispatch]);
 
+	const [addEditUserFormDialogOpenStatus, setAddEditUserFormDialogOpenStatus] =
+		useState(false);
+
 	return (
 		<div className='Home'>
-			<AddUser />
+			<AddEditUserFormDialog
+				formMode='ADD'
+				open={addEditUserFormDialogOpenStatus}
+				onClose={() => {
+					setAddEditUserFormDialogOpenStatus(false);
+				}}
+			/>
+
+			<Box>
+				<Button
+					variant='outlined'
+					endIcon={<AddCircleIcon />}
+					onClick={() => {
+						setAddEditUserFormDialogOpenStatus(true);
+					}}>
+					ADD USER
+				</Button>
+			</Box>
 
 			<UsersTable
 				userList={userList}

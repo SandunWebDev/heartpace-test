@@ -79,9 +79,9 @@ export default function createMockServer() {
 
 					// NOTE : Using "arrayElement" to return some entry without phone number. (As null)
 					return faker.helpers.arrayElement([
-						faker.phone.number(),
-						faker.phone.number(),
-						faker.phone.number(),
+						faker.phone.number({ style: 'international' }),
+						faker.phone.number({ style: 'international' }),
+						faker.phone.number({ style: 'international' }),
 						null,
 					]);
 				},
