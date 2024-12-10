@@ -31,7 +31,7 @@ This is a minimal dashboard application created as part of the take-home test fo
 
 ## Live Deployment
 
-- You can check already deployed version of this project in [https://google.com](https://google.com)
+- You can check already deployed version of this project in [https://heartpace.netlify.app/](https://heartpace.netlify.app/)
 
 ## Screenshots
 
