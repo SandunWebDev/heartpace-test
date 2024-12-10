@@ -11,6 +11,10 @@ import {
 	ResponsiveContainer,
 	LabelList,
 } from 'recharts';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { Payload } from 'recharts/types/component/DefaultLegendContent';
 import { Row } from '@tanstack/react-table';
 import startCase from 'lodash/startCase';
@@ -18,7 +22,10 @@ import { differenceInYears } from 'date-fns';
 
 import { User } from '../../services/mockServer/server';
 
-const geenrateChartData = (filteredUserRows: Row<User>[]) => {
+const geenrateChartData = (
+	filteredUserRows: Row<User>[],
+	colorMode: 'light' | 'dark',
+) => {
 	const userList = filteredUserRows.map((item) => item.original);
 
 	const ageGroups = {
@@ -95,12 +102,19 @@ const geenrateChartData = (filteredUserRows: Row<User>[]) => {
 		}
 	});
 
-	return Object.entries(ageGroups).map(([key, counts]) => {
+	return Object.entries(ageGroups).map(([key, counts], index) => {
 		return {
 			name: key,
 			...counts,
+			color: colors[colorMode][index],
 		};
 	});
+};
+
+// Colors for this chart.
+const colors = {
+	light: ['#4A90E2', '#FF6F61', '#6EC177'],
+	dark: ['#5FAEE4', '#C0767A', '#8ED1A3'],
 };
 
 export interface UsersAgeGroupVsGenderChartProps {
@@ -114,9 +128,13 @@ export default function UsersAgeGroupVsGenderChart({
 	height = '500px',
 	filteredUserRows,
 }: UsersAgeGroupVsGenderChartProps) {
+	const theme = useTheme();
+	const isInSmBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
+	const colorMode = theme.palette.mode;
+
 	const chartData = useMemo(() => {
-		return geenrateChartData(filteredUserRows);
-	}, [filteredUserRows]);
+		return geenrateChartData(filteredUserRows, colorMode);
+	}, [filteredUserRows, colorMode]);
 
 	const [legendOpacity, setOLegendOpacity] = useState({
 		male: 1,
@@ -141,8 +159,12 @@ export default function UsersAgeGroupVsGenderChart({
 	};
 
 	return (
-		<div style={{ height: height, width: '100%' }}>
-			{title && <h1>{title}</h1>}
+		<Box style={{ height: height, width: '100%' }}>
+			{title && (
+				<Typography variant='h6' gutterBottom sx={{ marginBottom: '25px' }}>
+					{title}
+				</Typography>
+			)}
 
 			<ResponsiveContainer width='100%' height='100%'>
 				<BarChart
@@ -179,48 +201,54 @@ export default function UsersAgeGroupVsGenderChart({
 					/>
 					<Bar
 						dataKey='male'
-						fill='#4285F4 '
+						fill={colors[colorMode][0]}
 						activeBar={<Rectangle />}
 						barSize={30}
 						fillOpacity={legendOpacity.male}>
-						<LabelList
-							dataKey='male'
-							position='top'
-							formatter={(value: string) => {
-								return Number(value) > 0 ? value : '';
-							}}
-						/>
+						{!isInSmBreakpoint && (
+							<LabelList
+								dataKey='male'
+								position='top'
+								formatter={(value: string) => {
+									return Number(value) > 0 ? value : '';
+								}}
+							/>
+						)}
 					</Bar>
 					<Bar
 						dataKey='female'
-						fill='#EA4335'
+						fill={colors[colorMode][1]}
 						activeBar={<Rectangle />}
 						barSize={30}
 						fillOpacity={legendOpacity.female}>
-						<LabelList
-							dataKey='female'
-							position='top'
-							formatter={(value: string) => {
-								return Number(value) > 0 ? value : '';
-							}}
-						/>
+						{!isInSmBreakpoint && (
+							<LabelList
+								dataKey='female'
+								position='top'
+								formatter={(value: string) => {
+									return Number(value) > 0 ? value : '';
+								}}
+							/>
+						)}
 					</Bar>
 					<Bar
 						dataKey='other'
-						fill='#FBBC05'
+						fill={colors[colorMode][2]}
 						activeBar={<Rectangle />}
 						barSize={30}
 						fillOpacity={legendOpacity.other}>
-						<LabelList
-							dataKey='other'
-							position='top'
-							formatter={(value: string) => {
-								return Number(value) > 0 ? value : '';
-							}}
-						/>
+						{!isInSmBreakpoint && (
+							<LabelList
+								dataKey='other'
+								position='top'
+								formatter={(value: string) => {
+									return Number(value) > 0 ? value : '';
+								}}
+							/>
+						)}
 					</Bar>
 				</BarChart>
 			</ResponsiveContainer>
-		</div>
+		</Box>
 	);
 }

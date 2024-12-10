@@ -1,7 +1,11 @@
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
+import EditIcon from '@mui/icons-material/Edit';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import SendIcon from '@mui/icons-material/Send';
 import { useTheme } from '@mui/material/styles';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
@@ -126,7 +130,19 @@ export default function AddEditUserFormDialog({
 
 	return (
 		<FormDialog
-			headerTitle={formMode === 'ADD' ? 'Add User' : 'Edit User'}
+			headerTitle={
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+					{formMode === 'ADD' ? (
+						<>
+							<PersonAddAltIcon /> Add User
+						</>
+					) : (
+						<>
+							<EditIcon /> Edit User
+						</>
+					)}
+				</Box>
+			}
 			open={open}
 			onClose={onClose}>
 			<Formik
@@ -194,119 +210,163 @@ export default function AddEditUserFormDialog({
 						<Form
 							noValidate // disabling html5 native validation
 						>
-							<FormikTextField
-								label='First Name'
-								name='firstName'
-								type='text'
-								required
-								disabled={isSubmitting}
-								size='small'
-							/>
-							<FormikTextField
-								label='Last Name'
-								name='lastName'
-								type='text'
-								required
-								disabled={isSubmitting}
-								size='small'
-							/>
-							<FormikTextField
-								select
-								label='Gender'
-								name='gender'
-								required
-								disabled={isSubmitting}
-								size='small'>
-								<MenuItem value={'male'}>Male</MenuItem>
-								<MenuItem value={'female'}>Female</MenuItem>
-								<MenuItem value={'other'}>Other</MenuItem>
-							</FormikTextField>
-							<FormikTextField
-								label='Birth Date'
-								name='birthDate'
-								type='date'
-								required
-								disabled={isSubmitting}
-								size='small'
-								setFieldValue={setFieldValue}
-							/>
-							<FormikTextField
-								label='Job Title'
-								name='jobTitle'
-								type='text'
-								disabled={isSubmitting}
-								size='small'
-							/>
-							<FormikTextField
-								label='Phone'
-								name='phone'
-								type='tel'
-								disabled={isSubmitting}
-								size='small'
-							/>
-							<FormikTextField
-								label='Email'
-								name='email'
-								type='email'
-								required
-								disabled={isSubmitting}
-								size='small'
-							/>
-							<FormikTextField
-								label='Address'
-								name='address'
-								type='text'
-								required
-								disabled={isSubmitting}
-								size='small'
-							/>
-							<FormikTextField
-								label='City'
-								name='city'
-								type='text'
-								required
-								disabled={isSubmitting}
-								size='small'
-							/>
-							<FormikTextField
-								select
-								label='Country'
-								name='country'
-								required
-								disabled={isSubmitting}
-								size='small'>
-								{countryList.map((country, index) => (
-									<MenuItem key={index} value={country.name}>
-										{country.name}
-									</MenuItem>
-								))}
-							</FormikTextField>
+							<Box
+								sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+								<Box>
+									<FormikTextField
+										label='First Name'
+										name='firstName'
+										type='text'
+										required
+										disabled={isSubmitting}
+										size='small'
+									/>
+								</Box>
 
-							{formMode === 'ADD' && addUserReqError && (
-								<Alert severity='error'>{addUserReqError}</Alert>
-							)}
+								<Box>
+									<FormikTextField
+										label='Last Name'
+										name='lastName'
+										type='text'
+										required
+										disabled={isSubmitting}
+										size='small'
+									/>
+								</Box>
 
-							{formMode === 'EDIT' && editUserReqError && (
-								<Alert severity='error'>{editUserReqError}</Alert>
-							)}
+								<Box>
+									<FormikTextField
+										select
+										label='Gender'
+										name='gender'
+										required
+										disabled={isSubmitting}
+										size='small'>
+										<MenuItem value={'male'}>Male</MenuItem>
+										<MenuItem value={'female'}>Female</MenuItem>
+										<MenuItem value={'other'}>Other</MenuItem>
+									</FormikTextField>
+								</Box>
 
-							<Button
-								disabled={isSubmitting}
-								variant='contained'
-								onClick={onClose}>
-								Close
-							</Button>
-							<Button
-								type='submit'
-								disabled={isSubmitting}
-								variant='contained'
-								endIcon={
-									isSubmitting ? (
-										<CircularProgress size='15px' color='inherit' />
-									) : null
-								}>
-								Submit
-							</Button>
+								<Box>
+									<FormikTextField
+										label='Birth Date'
+										name='birthDate'
+										type='date'
+										required
+										disabled={isSubmitting}
+										size='small'
+										setFieldValue={setFieldValue}
+									/>
+								</Box>
+
+								<Box>
+									<FormikTextField
+										label='Job Title'
+										name='jobTitle'
+										type='text'
+										disabled={isSubmitting}
+										size='small'
+									/>
+								</Box>
+
+								<Box>
+									<FormikTextField
+										label='Phone'
+										name='phone'
+										type='tel'
+										disabled={isSubmitting}
+										size='small'
+									/>
+								</Box>
+
+								<Box>
+									<FormikTextField
+										label='Email'
+										name='email'
+										type='email'
+										required
+										disabled={isSubmitting}
+										size='small'
+									/>
+								</Box>
+
+								<Box>
+									<FormikTextField
+										label='Address'
+										name='address'
+										type='text'
+										required
+										disabled={isSubmitting}
+										size='small'
+									/>
+								</Box>
+
+								<Box>
+									<FormikTextField
+										label='City'
+										name='city'
+										type='text'
+										required
+										disabled={isSubmitting}
+										size='small'
+									/>
+								</Box>
+
+								<Box>
+									<FormikTextField
+										select
+										label='Country'
+										name='country'
+										required
+										disabled={isSubmitting}
+										size='small'>
+										{countryList.map((country, index) => (
+											<MenuItem key={index} value={country.name}>
+												{country.name}
+											</MenuItem>
+										))}
+									</FormikTextField>
+								</Box>
+							</Box>
+
+							<Box sx={{ margin: '20px 0' }}>
+								{formMode === 'ADD' && addUserReqError && (
+									<Alert severity='error'>{addUserReqError}</Alert>
+								)}
+
+								{formMode === 'EDIT' && editUserReqError && (
+									<Alert severity='error'>{editUserReqError}</Alert>
+								)}
+							</Box>
+
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'row',
+									gap: '10px',
+									justifyContent: 'flex-end',
+								}}>
+								<Button
+									disabled={isSubmitting}
+									variant='contained'
+									onClick={onClose}>
+									Close
+								</Button>
+								<Button
+									type='submit'
+									disabled={isSubmitting}
+									variant='contained'
+									endIcon={
+										isSubmitting ? (
+											<CircularProgress size='15px' color='inherit' />
+										) : (
+											<SendIcon />
+										)
+									}>
+									Submit
+								</Button>
+							</Box>
 						</Form>
 					);
 				}}

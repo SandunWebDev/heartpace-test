@@ -18,7 +18,16 @@ export default function FormDialog(props: FormDialog) {
 			maxWidth='sm'
 			open={open}
 			{...remainingProps}>
-			<DialogTitle>
+			<DialogTitle
+				sx={(theme) => {
+					return {
+						marginBottom: '25px',
+						borderBottom: `1px solid ${theme.palette.grey[400]}`,
+						...theme.applyStyles('dark', {
+							borderBottom: `1px solid ${theme.palette.grey[600]}`,
+						}),
+					};
+				}}>
 				{headerTitle}
 
 				<IconButton

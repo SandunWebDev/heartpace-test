@@ -7,16 +7,47 @@ import {
 	ResponsiveContainer,
 	Cell,
 } from 'recharts';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { Payload } from 'recharts/types/component/DefaultLegendContent';
 import { Row } from '@tanstack/react-table';
 import startCase from 'lodash/startCase';
-import { faker } from '@faker-js/faker';
 import countryList from 'country-locale-map';
-// Utils
+
 import { User } from '../../services/mockServer/server';
 
-const geenrateChartData = (filteredUserRows: Row<User>[]) => {
+const geenrateChartData = (
+	filteredUserRows: Row<User>[],
+	colorMode: 'light' | 'dark',
+) => {
 	const userList = filteredUserRows.map((item) => item.original);
+
+	const colors = {
+		light: [
+			'#FF6F61',
+			'#6EC177',
+			'#4A90E2',
+			'#F5A623',
+			'#D96BB4',
+			'#50E3C2',
+			'#FFA07A',
+			'#FFD700',
+			'#A020F0',
+		],
+		dark: [
+			'#C0767A',
+			'#8ED1A3',
+			'#5FAEE4',
+			'#DA9F88',
+			'#C065B3',
+			'#7AE6C9',
+			'#D9B86F',
+			'#9C88D3',
+			'#B875D1',
+		],
+	};
 
 	const userListByContinet = userList.reduce(
 		(acc, user) => {
@@ -33,8 +64,7 @@ const geenrateChartData = (filteredUserRows: Row<User>[]) => {
 	);
 
 	return Object.entries(userListByContinet).map(([key, count], index) => {
-		faker.seed(index + 402); // Just random seed to get some colors.
-		return { name: key, value: count, color: faker.color.rgb() };
+		return { name: key, value: count, color: colors[colorMode][index] };
 	});
 };
 
@@ -49,9 +79,13 @@ export default function UsersAgeGroupVsGenderChart({
 	height = '500px',
 	filteredUserRows,
 }: UsersAgeGroupVsGenderChartProps) {
+	const theme = useTheme();
+	const isInSmBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
+	const colorMode = theme.palette.mode;
+
 	const chartData = useMemo(() => {
-		return geenrateChartData(filteredUserRows);
-	}, [filteredUserRows]);
+		return geenrateChartData(filteredUserRows, colorMode);
+	}, [filteredUserRows, colorMode]);
 
 	const [legendOpacity, setOLegendOpacity] = useState<Record<string, number>>(
 		{},
@@ -74,15 +108,17 @@ export default function UsersAgeGroupVsGenderChart({
 	};
 
 	return (
-		<div style={{ height: height, width: '100%' }}>
-			{title && <h1>{title}</h1>}
+		<Box style={{ height: height, width: '100%' }}>
+			<Typography variant='h6' gutterBottom>
+				{title}
+			</Typography>
 
 			<ResponsiveContainer width='100%' height='100%'>
 				<PieChart width={500} height={500}>
 					<Pie
 						dataKey='value'
 						data={chartData}
-						innerRadius={120}
+						innerRadius={isInSmBreakpoint ? 80 : 120}
 						fill='#82ca9d'
 						label={true}
 						paddingAngle={5}>
@@ -107,6 +143,6 @@ export default function UsersAgeGroupVsGenderChart({
 					/>
 				</PieChart>
 			</ResponsiveContainer>
-		</div>
+		</Box>
 	);
 }

@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
@@ -36,10 +37,24 @@ export default function DeleteUserFormDialog({
 	}
 
 	return (
-		<FormDialog headerTitle={'Delete User'} open={open} onClose={onClose}>
+		<FormDialog
+			headerTitle={
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+					<DeleteIcon /> Delete User
+				</Box>
+			}
+			open={open}
+			onClose={onClose}>
 			<form>
 				<Box>Are you sure you want to delete this user?</Box>
-				<Box>
+
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'flex-end',
+						marginTop: '20px',
+						gap: '10px',
+					}}>
 					<Button
 						disabled={deleteUserReqStatus === 'LOADING'}
 						variant='contained'
@@ -83,7 +98,9 @@ export default function DeleteUserFormDialog({
 						endIcon={
 							deleteUserReqStatus === 'LOADING' ? (
 								<CircularProgress size='15px' color='inherit' />
-							) : null
+							) : (
+								<DeleteIcon />
+							)
 						}>
 						Delete
 					</Button>

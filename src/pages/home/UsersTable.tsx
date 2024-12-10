@@ -30,18 +30,19 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
+import Fab from '@mui/material/Fab';
+import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
 import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { format } from 'date-fns';
-import clsx from 'clsx';
 import debounce from 'lodash/debounce';
+import startCase from 'lodash/startCase';
 
 import { User } from '../../services/mockServer/server';
 import { FetchStatus } from '../../services/redux/types';
@@ -107,14 +108,14 @@ export default function UsersTable({
 	getAllUsersReqStatus,
 	getAllUsersReqError,
 }: UsersTableProps) {
-	const [addEditUserFormDialogOpenStatus, setAddEditUserFormDialogOpenStatus] =
+	const [addUserFormDialogOpenStatus, setAddUserFormDialogOpenStatus] =
+		useState(false);
+	const [editUserFormDialogOpenStatus, setEditUserFormDialogOpenStatus] =
 		useState(false);
 	const [editUserCurrentData, setEditUserCurrentData] = useState(null);
 
-	const [
-		deleteUserFormDialogOpenStatus,
-		setDeleteEditUserFormDialogOpenStatus,
-	] = useState(false);
+	const [deleteUserFormDialogOpenStatus, setDeleteUserFormDialogOpenStatus] =
+		useState(false);
 	const [deleteUserCurrentId, setDeleteUserCurrentId] = useState(null);
 
 	const columns = useMemo<ColumnDef<User>[]>(
@@ -128,7 +129,7 @@ export default function UsersTable({
 							<IconButton
 								onClick={() => {
 									setEditUserCurrentData(() => {
-										setAddEditUserFormDialogOpenStatus(true);
+										setEditUserFormDialogOpenStatus(true);
 
 										return info.row.original;
 									});
@@ -136,9 +137,10 @@ export default function UsersTable({
 								<EditIcon />
 							</IconButton>
 							<IconButton
+								sx={{ marginLeft: '-5px' }}
 								onClick={() => {
 									setDeleteUserCurrentId(() => {
-										setDeleteEditUserFormDialogOpenStatus(true);
+										setDeleteUserFormDialogOpenStatus(true);
 
 										return info.row.original.id;
 									});
@@ -148,24 +150,27 @@ export default function UsersTable({
 						</Box>
 					);
 				},
-				size: 100,
-				enableSorting: false,
-			},
-			// This column is only for debug purposes.
-			{
-				id: 'itemIndex',
-				header: () => <span>#</span>,
-				cell: (info) => {
-					return info.row.index + 1;
-				},
-				size: 45,
+				size: 90,
 				enableSorting: false,
 			},
 			{
 				accessorKey: 'id',
 				header: () => <span>ID</span>,
-				cell: (info) => info.getValue(),
-				size: 310,
+				cell: (info) => {
+					return (
+						<Typography
+							sx={{
+								overflow: 'hidden',
+								textOverflow: 'ellipsis',
+								maxWidth: '80px',
+								whiteSpace: 'nowrap',
+							}}
+							title={info.getValue()}>
+							{info.getValue()}
+						</Typography>
+					);
+				},
+				size: 100,
 				sortingFn: 'alphanumericCaseSensitive',
 			},
 			{
@@ -185,8 +190,8 @@ export default function UsersTable({
 			{
 				accessorKey: 'gender',
 				header: () => <span>Gender</span>,
-				cell: (info) => info.getValue(),
-				size: 330,
+				cell: (info) => startCase(info.getValue()),
+				size: 100,
 				sortingFn: 'textCaseSensitive',
 				sortUndefined: -1,
 			},
@@ -306,22 +311,22 @@ export default function UsersTable({
 		overscan: 5,
 	});
 
-	if (getAllUsersReqStatus === 'LOADING') {
-		return <CircularProgress />;
-	}
+	const renderDialogs = (
+		<>
+			<AddEditUserFormDialog
+				formMode='ADD'
+				open={addUserFormDialogOpenStatus}
+				onClose={() => {
+					setAddUserFormDialogOpenStatus(false);
+				}}
+			/>
 
-	if (getAllUsersReqError) {
-		return <Alert severity='error'>{getAllUsersReqError}</Alert>;
-	}
-
-	return (
-		<div className='UsersTable'>
 			<AddEditUserFormDialog
 				formMode='EDIT'
 				editUserCurrentData={editUserCurrentData}
-				open={addEditUserFormDialogOpenStatus}
+				open={editUserFormDialogOpenStatus}
 				onClose={() => {
-					setAddEditUserFormDialogOpenStatus(false);
+					setEditUserFormDialogOpenStatus(false);
 				}}
 			/>
 
@@ -329,34 +334,75 @@ export default function UsersTable({
 				deleteUserCurrentId={deleteUserCurrentId}
 				open={deleteUserFormDialogOpenStatus}
 				onClose={() => {
-					setDeleteEditUserFormDialogOpenStatus(false);
+					setDeleteUserFormDialogOpenStatus(false);
 				}}
 			/>
+		</>
+	);
 
-			<h1>Users Table</h1>
+	return (
+		<Box className='UsersTable'>
+			{renderDialogs}
 
-			<div>
-				<div>Total Users : {userList.length}</div>
-				<div>Filtered Users : {rows.length}</div>
-			</div>
+			<Typography variant='h6' gutterBottom>
+				Users List
+			</Typography>
 
-			<UsersSearch
-				value={globalFilter}
-				onChange={(value) => {
-					setGlobalFilter(value);
-				}}
-				onClose={() => {
-					setGlobalFilter('');
-				}}
-			/>
+			<Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+				<Box
+					sx={{
+						display: 'inline-block',
+						border: '1.5px solid gray',
+						padding: '15px 25px',
+						borderRadius: '4px',
+					}}>
+					<Typography gutterBottom color='gray'>
+						Filtered/Total Users
+					</Typography>
+					<Typography variant='h5' component='div' sx={{ fontWeight: 'bold' }}>
+						{rows.length} / {userList.length}
+					</Typography>
+				</Box>
+
+				<Box
+					sx={{
+						marginLeft: 'auto',
+					}}>
+					<Fab
+						color='primary'
+						onClick={() => {
+							setAddUserFormDialogOpenStatus(true);
+						}}>
+						<PersonAddAltIcon />
+					</Fab>
+				</Box>
+			</Box>
+
+			<Box sx={{ margin: '30px 0 30px 0' }}>
+				<UsersSearch
+					value={globalFilter}
+					onChange={(value) => {
+						setGlobalFilter(value);
+					}}
+					onClose={() => {
+						setGlobalFilter('');
+					}}
+				/>
+			</Box>
 
 			<TableContainer
 				className='UsersTableContainer'
 				ref={tableContainerRef}
-				sx={{
-					overflow: 'auto', // our scrollable table container
-					position: 'relative', // needed for sticky header
-					height: '400px', // should be a fixed height
+				sx={(theme) => {
+					return {
+						overflow: 'auto', // our scrollable table container
+						position: 'relative', // needed for sticky header
+						height: '400px', // should be a fixed height
+						border: `1px solid ${theme.palette.grey[200]}`,
+						...theme.applyStyles('dark', {
+							border: `1px solid ${theme.palette.grey[800]}`,
+						}),
+					};
 				}}>
 				{/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
 				<Table sx={{ display: 'grid', minWidth: 450 }} stickyHeader>
@@ -375,21 +421,28 @@ export default function UsersTable({
 									return (
 										<TableCell
 											key={header.id}
-											sx={{
-												display: 'flex',
-												width: header.getSize(),
+											sx={(theme) => {
+												return {
+													display: 'flex',
+													width: header.getSize(),
+													background: theme.palette.grey[200],
+													...theme.applyStyles('dark', {
+														background: theme.palette.grey[900],
+													}),
+												};
 											}}
 											variant='head'>
 											<div style={{ width: '100%' }}>
-												<div
+												<Box
 													onClick={header.column.getToggleSortingHandler()}
-													className={clsx(
-														'UsersTable__TableHead__columnSortContainer',
-														{
-															'UsersTable__TableHead__columnSortContainer--sortable':
-																header.column.getCanSort(),
-														},
-													)}>
+													sx={{
+														width: '100%',
+														userSelect: 'none',
+														whiteSpace: 'break-spaces',
+														cursor: header.column.getCanSort()
+															? 'pointer'
+															: 'inherit',
+													}}>
 													{flexRender(
 														header.column.columnDef.header,
 														header.getContext(),
@@ -398,7 +451,7 @@ export default function UsersTable({
 														asc: ' 🔼',
 														desc: ' 🔽',
 													}[header.column.getIsSorted() as string] ?? null}
-												</div>
+												</Box>
 
 												<div>
 													{header.column.getCanFilter() ? (
@@ -455,14 +508,26 @@ export default function UsersTable({
 				</Table>
 			</TableContainer>
 
-			<Box sx={{ display: 'flex', width: '100%' }}>
-				<UsersCountryChart title='Users By Continent' filteredUserRows={rows} />
+			<Box
+				sx={(theme) => {
+					return {
+						display: 'flex',
+						width: '100%',
+						marginTop: '45px',
+						paddingBottom: '35px',
+						gap: '80px',
+						[theme.breakpoints.down('lg')]: {
+							flexWrap: 'wrap',
+						},
+					};
+				}}>
 				<UsersAgeGroupVsGenderChart
 					title='Users By Age Group'
 					filteredUserRows={rows}
 				/>
+				<UsersCountryChart title='Users By Continent' filteredUserRows={rows} />
 			</Box>
-		</div>
+		</Box>
 	);
 }
 
@@ -609,11 +674,12 @@ function UsersSearch({
 			onChange={(e) => {
 				onChange(e.target.value);
 			}}
+			placeholder='Fuzzy Search Users'
 			slotProps={{
 				input: {
 					startAdornment: (
 						<InputAdornment position='start'>
-							<PersonSearchIcon />
+							<PersonSearchIcon sx={{ fontSize: '30px' }} />
 						</InputAdornment>
 					),
 					endAdornment: (

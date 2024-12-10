@@ -4,7 +4,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton, { IconButtonOwnProps } from '@mui/material/IconButton';
 import DarkModeIcon from '@mui/icons-material/DarkModeRounded';
-import LightModeIcon from '@mui/icons-material/LightModeRounded';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import { useColorScheme } from '@mui/material/styles';
 
 export default function ColorSchemeSelector(props: IconButtonOwnProps) {
@@ -44,7 +44,7 @@ export default function ColorSchemeSelector(props: IconButtonOwnProps) {
 
 	const resolvedMode = (systemMode ?? mode) as 'light' | 'dark';
 	const icon = {
-		light: <LightModeIcon />,
+		light: <LightModeIcon sx={{ color: 'white' }} />,
 		dark: <DarkModeIcon />,
 	}[resolvedMode];
 
