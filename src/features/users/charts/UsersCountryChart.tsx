@@ -12,18 +12,15 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Payload } from 'recharts/types/component/DefaultLegendContent';
-import { Row } from '@tanstack/react-table';
 import startCase from 'lodash/startCase';
 import countryList from 'country-locale-map';
 
-import { User } from '../../services/mockServer/server';
+import { UserListWithAddiData } from '../UsersTable';
 
 const geenrateChartData = (
-	filteredUserRows: Row<User>[],
+	filteredUserRows: UserListWithAddiData[],
 	colorMode: 'light' | 'dark',
 ) => {
-	const userList = filteredUserRows.map((item) => item.original);
-
 	const colors = {
 		light: [
 			'#FF6F61',
@@ -49,7 +46,7 @@ const geenrateChartData = (
 		],
 	};
 
-	const userListByContinet = userList.reduce(
+	const userListByContinet = filteredUserRows.reduce(
 		(acc, user) => {
 			const country = user.country;
 			const countryData = countryList.getCountryByName(country, true);
@@ -71,7 +68,7 @@ const geenrateChartData = (
 export interface UsersAgeGroupVsGenderChartProps {
 	title?: ReactNode;
 	height?: CSSProperties['height'];
-	filteredUserRows: Row<User>[];
+	filteredUserRows: UserListWithAddiData[];
 }
 
 export default function UsersAgeGroupVsGenderChart({

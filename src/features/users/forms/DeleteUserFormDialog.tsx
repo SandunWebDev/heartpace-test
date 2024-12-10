@@ -58,7 +58,7 @@ export default function DeleteUserFormDialog({
 					<Button
 						disabled={deleteUserReqStatus === 'LOADING'}
 						variant='contained'
-						onClick={async () => {
+						onClick={() => {
 							onClose();
 						}}>
 						Close
@@ -81,7 +81,7 @@ export default function DeleteUserFormDialog({
 									draggable: false,
 									theme: colorMode === 'light' ? 'light' : 'dark',
 								});
-							} catch (err) {
+							} catch {
 								toast.error(deleteUserReqError, {
 									position: 'top-right',
 									autoClose: 2000,

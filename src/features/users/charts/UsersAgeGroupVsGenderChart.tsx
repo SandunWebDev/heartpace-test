@@ -16,18 +16,14 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Payload } from 'recharts/types/component/DefaultLegendContent';
-import { Row } from '@tanstack/react-table';
 import startCase from 'lodash/startCase';
-import { differenceInYears } from 'date-fns';
 
-import { User } from '../../services/mockServer/server';
+import { UserListWithAddiData } from '../UsersTable';
 
 const geenrateChartData = (
-	filteredUserRows: Row<User>[],
+	filteredUserRows: UserListWithAddiData[],
 	colorMode: 'light' | 'dark',
 ) => {
-	const userList = filteredUserRows.map((item) => item.original);
-
 	const ageGroups = {
 		'0-19': { male: 0, female: 0, other: 0 },
 		'20-29': { male: 0, female: 0, other: 0 },
@@ -41,10 +37,8 @@ const geenrateChartData = (
 		'100-X': { male: 0, female: 0, other: 0 },
 	};
 
-	userList.forEach((user) => {
-		const birthDate = new Date(user.birthDate);
-		const todayDate = new Date();
-		const age = differenceInYears(todayDate, birthDate);
+	filteredUserRows.forEach((user) => {
+		const age = user.age;
 
 		let ageGroup: keyof typeof ageGroups;
 		switch (true) {
@@ -120,7 +114,7 @@ const colors = {
 export interface UsersAgeGroupVsGenderChartProps {
 	title?: ReactNode;
 	height?: CSSProperties['height'];
-	filteredUserRows: Row<User>[];
+	filteredUserRows: UserListWithAddiData[];
 }
 
 export default function UsersAgeGroupVsGenderChart({

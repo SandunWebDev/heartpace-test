@@ -30,7 +30,7 @@ export default function FormikTextField({
 					<DatePicker
 						{...field}
 						{...props}
-						value={new Date(field.value)}
+						value={new Date(field.value as string)}
 						onChange={(value) => {
 							setFieldValue(field.name, value);
 						}}

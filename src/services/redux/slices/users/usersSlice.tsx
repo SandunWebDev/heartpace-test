@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { differenceInYears } from 'date-fns';
 
 import type { FetchStatus } from '../../types';
 import { User } from '../../../mockServer/server';

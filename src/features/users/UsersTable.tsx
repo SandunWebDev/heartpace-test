@@ -5,9 +5,7 @@ import {
 	ColumnFiltersState,
 	RowData,
 	FilterFn,
-	SortingFn,
 	flexRender,
-	sortingFns,
 	getCoreRowModel,
 	getSortedRowModel,
 	getFilteredRowModel,
@@ -17,11 +15,7 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-	rankItem,
-	compareItems,
-	RankingInfo,
-} from '@tanstack/match-sorter-utils';
+import { RankingInfo } from '@tanstack/match-sorter-utils';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -40,12 +34,15 @@ import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
-import { format, differenceInYears } from 'date-fns';
+import { differenceInYears } from 'date-fns';
 import debounce from 'lodash/debounce';
 import startCase from 'lodash/startCase';
 
+import {
+	birthDateStringFormatter,
+	fuzzyFilter,
+} from './helpers/userTableHelpers';
 import { User } from '../../services/mockServer/server';
-import { FetchStatus } from '../../services/redux/types';
 import AddEditUserFormDialog from './forms/AddEditUserFormDialog';
 import DeleteUserFormDialog from './forms/DeleteUserFormDialog';
 import UsersAgeGroupVsGenderChart from './charts/UsersAgeGroupVsGenderChart';
@@ -67,47 +64,15 @@ declare module '@tanstack/react-table' {
 	}
 }
 
-function birthDateStringFormatter(birthDate: string) {
-	const date = new Date(birthDate);
-	return format(date, 'yyyy-MM-dd');
+export interface UserListWithAddiData extends User {
+	age: number;
 }
 
-// Custom Fuzzy Filter to filter globally.
-// It filter and sort by the rank information of "rankItem Lib" store the ranking information in the meta data of the row, and return whether the item passed the ranking criteria.
-// Essentially this can be used to filter row by their closest matches to the search query.
-export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-	const itemRank = rankItem(row.getValue(columnId), value as string);
-	addMeta({ itemRank }); // Store the itemRank info
-	return itemRank.passed; // Return if the item should be filtered in/out
-};
-
-// Custom sroting function to be used with above fuzzyFilter ranking data.
-export const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-	let dir = 0;
-
-	// Only sort by rank if the column has ranking information
-	if (rowA.columnFiltersMeta[columnId]) {
-		dir = compareItems(
-			rowA.columnFiltersMeta[columnId]?.itemRank,
-			rowB.columnFiltersMeta[columnId]?.itemRank,
-		);
-	}
-
-	// Provide an alphanumeric fallback for when the item ranks are equal
-	return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-};
-
-interface UsersTableProps {
+export interface UsersTableProps {
 	userList: User[];
-	getAllUsersReqStatus: FetchStatus;
-	getAllUsersReqError: string | null;
 }
 
-export default function UsersTable({
-	userList,
-	getAllUsersReqStatus,
-	getAllUsersReqError,
-}: UsersTableProps) {
+export default function UsersTable({ userList }: UsersTableProps) {
 	const [addUserFormDialogOpenStatus, setAddUserFormDialogOpenStatus] =
 		useState(false);
 	const [editUserFormDialogOpenStatus, setEditUserFormDialogOpenStatus] =
@@ -119,7 +84,7 @@ export default function UsersTable({
 	const [deleteUserCurrentId, setDeleteUserCurrentId] = useState(null);
 
 	// Addding some addtional calulated properties. (age)
-	const userListWithAddiData = useMemo(() => {
+	const userListWithAddiData: UserListWithAddiData[] = useMemo(() => {
 		return userList.map((item) => {
 			const birthDate = new Date(item.birthDate);
 			const todayDate = new Date();
@@ -129,7 +94,7 @@ export default function UsersTable({
 		});
 	}, [userList]);
 
-	const columns = useMemo<ColumnDef<User>[]>(
+	const columns = useMemo<ColumnDef<UserListWithAddiData>[]>(
 		() => [
 			{
 				id: 'actions',
@@ -306,6 +271,11 @@ export default function UsersTable({
 	});
 
 	const { rows } = table.getRowModel();
+
+	const filteredUserRows = useMemo(
+		() => rows.map((item) => item.original),
+		[rows],
+	);
 
 	// The virtualizer needs to know the scrollable container element
 	const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -534,9 +504,12 @@ export default function UsersTable({
 				}}>
 				<UsersAgeGroupVsGenderChart
 					title='Users By Age Group'
-					filteredUserRows={rows}
+					filteredUserRows={filteredUserRows}
 				/>
-				<UsersCountryChart title='Users By Continent' filteredUserRows={rows} />
+				<UsersCountryChart
+					title='Users By Continent'
+					filteredUserRows={filteredUserRows}
+				/>
 			</Box>
 		</Box>
 	);

@@ -18,31 +18,23 @@ import {
 	usersActions,
 	usersSelectors,
 } from '../../../services/redux/slices/users/usersSlice';
-import { Gender } from '../../../services/mockServer/server';
 import { countryList } from '../../../utils/countryList';
 import FormikTextField from '../../../components/formikFields/FormikTextField';
 import FormDialog from '../../../components/dialogs/FormDialog';
 import { User } from '../../../services/mockServer/server';
-
-// Some default error texts that will be used with yup validations.
-export const errorTexts = {
-	required: () => 'Required',
-	onlyLetters: () => 'Must only contain letters',
-	minChars: (chars: number) => `Must be at least ${chars} characters`,
-	maxChars: (chars: number) => `Must be lower than ${chars} characters`,
-};
+import { errorTexts } from '../helpers/formHelpers';
 
 const userFormValidationScheme = Yup.object().shape({
 	firstName: Yup.string()
 		.trim()
 		.required(errorTexts.required())
-		.matches(/^[a-zA-Z\s\-]+$/, errorTexts.onlyLetters())
+		.matches(/^[a-zA-Z\s-]+$/, errorTexts.onlyLetters())
 		.max(50, errorTexts.maxChars(50)),
 
 	lastName: Yup.string()
 		.trim()
 		.required(errorTexts.required())
-		.matches(/^[a-zA-Z\s\-]+$/, errorTexts.onlyLetters())
+		.matches(/^[a-zA-Z\s-]+$/, errorTexts.onlyLetters())
 		.max(50, errorTexts.maxChars(50)),
 
 	gender: Yup.string()
@@ -56,7 +48,7 @@ const userFormValidationScheme = Yup.object().shape({
 	jobTitle: Yup.string().trim().max(100, errorTexts.maxChars(100)).optional(),
 
 	phone: Yup.string()
-		.matches(/^\+?[0-9][0-9\s\-]{0,14}$/, 'Invalid phone number format')
+		.matches(/^\+?[0-9][0-9\s-]{0,14}$/, 'Invalid phone number format')
 		.nullable(),
 
 	email: Yup.string()
