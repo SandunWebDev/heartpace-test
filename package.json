@@ -23,6 +23,7 @@
 		"@tanstack/react-table": "^8.20.5",
 		"@tanstack/react-virtual": "^3.11.0",
 		"axios": "^1.7.9",
+		"country-locale-map": "^1.9.9",
 		"date-fns": "^4.1.0",
 		"eslint-plugin-react": "^7.37.2",
 		"formik": "^2.4.6",

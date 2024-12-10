@@ -1,4 +1,4 @@
-import { useState, useMemo, CSSProperties } from 'react';
+import { useState, useMemo, CSSProperties, ReactNode } from 'react';
 import {
 	BarChart,
 	Bar,
@@ -104,11 +104,13 @@ const geenrateChartData = (filteredUserRows: Row<User>[]) => {
 };
 
 export interface UsersAgeGroupVsGenderChartProps {
+	title?: ReactNode;
 	height?: CSSProperties['height'];
 	filteredUserRows: Row<User>[];
 }
 
 export default function UsersAgeGroupVsGenderChart({
+	title,
 	height = '500px',
 	filteredUserRows,
 }: UsersAgeGroupVsGenderChartProps) {
@@ -139,7 +141,9 @@ export default function UsersAgeGroupVsGenderChart({
 	};
 
 	return (
-		<div style={{ height: height }}>
+		<div style={{ height: height, width: '100%' }}>
+			{title && <h1>{title}</h1>}
+
 			<ResponsiveContainer width='100%' height='100%'>
 				<BarChart
 					width={500}

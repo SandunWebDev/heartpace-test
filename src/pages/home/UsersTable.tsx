@@ -48,6 +48,7 @@ import { FetchStatus } from '../../services/redux/types';
 import AddEditUserFormDialog from './AddEditUserFormDialog';
 import DeleteUserFormDialog from './DeleteUserFormDialog';
 import UsersAgeGroupVsGenderChart from './UsersAgeGroupVsGenderChart';
+import UsersCountryChart from './UsersCountryChart';
 
 declare module '@tanstack/react-table' {
 	// Types that allows us to define custom properties for our columns in "meta" property.
@@ -454,7 +455,13 @@ export default function UsersTable({
 				</Table>
 			</TableContainer>
 
-			<UsersAgeGroupVsGenderChart filteredUserRows={rows} />
+			<Box sx={{ display: 'flex', width: '100%' }}>
+				<UsersCountryChart title='Users By Continent' filteredUserRows={rows} />
+				<UsersAgeGroupVsGenderChart
+					title='Users By Age Group'
+					filteredUserRows={rows}
+				/>
+			</Box>
 		</div>
 	);
 }
