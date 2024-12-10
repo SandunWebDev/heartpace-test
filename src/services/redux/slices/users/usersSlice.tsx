@@ -51,18 +51,7 @@ export const usersSlice = createSlice({
 			})
 			.addCase(getAllUsers.fulfilled, (state, action) => {
 				state.getAllUsersReqStatus = 'IDLE';
-
-				// Addding some addtional calulated properties.
-				const userList = action.payload;
-				const userListWithAdditionalData = userList.map((item) => {
-					const birthDate = new Date(item.birthDate);
-					const todayDate = new Date();
-					const age = differenceInYears(todayDate, birthDate);
-
-					return { ...item, age };
-				});
-
-				state.userList = userListWithAdditionalData;
+				state.userList = action.payload;
 			})
 			.addCase(getAllUsers.rejected, (state, action) => {
 				state.getAllUsersReqStatus = 'ERROR';

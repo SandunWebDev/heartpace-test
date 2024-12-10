@@ -40,7 +40,7 @@ import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
-import { format } from 'date-fns';
+import { format, differenceInYears } from 'date-fns';
 import debounce from 'lodash/debounce';
 import startCase from 'lodash/startCase';
 
@@ -117,6 +117,17 @@ export default function UsersTable({
 	const [deleteUserFormDialogOpenStatus, setDeleteUserFormDialogOpenStatus] =
 		useState(false);
 	const [deleteUserCurrentId, setDeleteUserCurrentId] = useState(null);
+
+	// Addding some addtional calulated properties. (age)
+	const userListWithAddiData = useMemo(() => {
+		return userList.map((item) => {
+			const birthDate = new Date(item.birthDate);
+			const todayDate = new Date();
+			const age = differenceInYears(todayDate, birthDate);
+
+			return { ...item, age };
+		});
+	}, [userList]);
 
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
@@ -271,7 +282,7 @@ export default function UsersTable({
 	const [globalFilter, setGlobalFilter] = useState('');
 
 	const table = useReactTable({
-		data: userList,
+		data: userListWithAddiData,
 		columns,
 		state: {
 			columnFilters,
@@ -360,7 +371,7 @@ export default function UsersTable({
 						Filtered/Total Users
 					</Typography>
 					<Typography variant='h5' component='div' sx={{ fontWeight: 'bold' }}>
-						{rows.length} / {userList.length}
+						{rows.length} / {userListWithAddiData.length}
 					</Typography>
 				</Box>
 
