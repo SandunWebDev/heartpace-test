@@ -155,7 +155,7 @@ export default function AddEditUserFormDialog({
 								...formData,
 								id: faker.string.uuid(),
 								birthDate: new Date(formData.birthDate as string),
-								gender: formData.gender as Gender,
+								gender: formData.gender,
 							};
 
 							await dispatch(

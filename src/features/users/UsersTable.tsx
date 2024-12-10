@@ -546,7 +546,7 @@ function ColumnFilter({ column }: { column: Column<any, unknown> }) {
 		[column.getFacetedUniqueValues(), filterVariant],
 	);
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedSetFacetedUniqueFilterValue = useCallback(
 		debounce((changedValue: string | number) => {
 			column.setFilterValue(changedValue);
@@ -554,7 +554,7 @@ function ColumnFilter({ column }: { column: Column<any, unknown> }) {
 		[],
 	);
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedSetFacetedMinMaxFilterMinValue = useCallback(
 		debounce((changedValue: string | number) => {
 			column.setFilterValue((old: [number, number]) => [
@@ -565,7 +565,7 @@ function ColumnFilter({ column }: { column: Column<any, unknown> }) {
 		[],
 	);
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedSetFacetedMinMaxFilterMaxValue = useCallback(
 		debounce((changedValue: string | number) => {
 			column.setFilterValue((old: [number, number]) => [
@@ -628,7 +628,7 @@ function ColumnFilter({ column }: { column: Column<any, unknown> }) {
 					// This is needed beacuse we need to show "birthDate" column value in easy human readable format.
 					// Don't use similar "getOptionLabel" for this. Beacuse it add bugs to search result.
 
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react/prop-types
+					// eslint-disable-next-line react/prop-types
 					const { key, ...remainingProps } = props;
 
 					let formattedOption;

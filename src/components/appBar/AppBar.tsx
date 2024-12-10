@@ -105,8 +105,11 @@ export default function AppBar() {
 					<Box sx={{ flexGrow: 1 }} />
 					<ColorSchemeSelector />
 
-					{/* Menu to be enable later if needed */}
-					{/* <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+					<Box
+						sx={{
+							// Enable when we need a menu.
+							display: 'none', // display: { xs: 'none', md: 'flex' },
+						}}>
 						<IconButton
 							size='large'
 							edge='end'
@@ -122,7 +125,7 @@ export default function AppBar() {
 							color='inherit'>
 							<MoreIcon />
 						</IconButton>
-					</Box> */}
+					</Box>
 				</Toolbar>
 			</MuiAppBar>
 
