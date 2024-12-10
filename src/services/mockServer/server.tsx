@@ -60,6 +60,12 @@ export default function createMockServer() {
 				},
 				gender(i) {
 					faker.seed(i);
+
+					return faker.helpers.arrayElement([
+						faker.person.sex() as Gender,
+						faker.person.sex() as Gender,
+						'other',
+					]);
 					return faker.person.sex() as Gender;
 				},
 				birthDate(i) {

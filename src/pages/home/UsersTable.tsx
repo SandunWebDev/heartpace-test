@@ -47,6 +47,7 @@ import { User } from '../../services/mockServer/server';
 import { FetchStatus } from '../../services/redux/types';
 import AddEditUserFormDialog from './AddEditUserFormDialog';
 import DeleteUserFormDialog from './DeleteUserFormDialog';
+import UsersAgeGroupVsGenderChart from './UsersAgeGroupVsGenderChart';
 
 declare module '@tanstack/react-table' {
 	// Types that allows us to define custom properties for our columns in "meta" property.
@@ -312,8 +313,6 @@ export default function UsersTable({
 		return <Alert severity='error'>{getAllUsersReqError}</Alert>;
 	}
 
-	console.log('AAA', editUserCurrentData);
-
 	return (
 		<div className='UsersTable'>
 			<AddEditUserFormDialog
@@ -454,6 +453,8 @@ export default function UsersTable({
 					</TableBody>
 				</Table>
 			</TableContainer>
+
+			<UsersAgeGroupVsGenderChart filteredUserRows={rows} />
 		</div>
 	);
 }
