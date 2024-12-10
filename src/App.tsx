@@ -1,11 +1,10 @@
-import ColorSchemeSelector from './components/colorSchemeSelector/ColorSchemeSelector';
+import RootLayout from './components/layouts/RootLayout';
 import Home from './pages/home/Home';
 
 export default function App() {
 	return (
-		<>
-			<ColorSchemeSelector />
+		<RootLayout>
 			<Home />
-		</>
+		</RootLayout>
 	);
 }

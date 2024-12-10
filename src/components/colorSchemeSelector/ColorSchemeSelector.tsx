@@ -56,7 +56,9 @@ export default function ColorSchemeSelector(props: IconButtonOwnProps) {
 
 			<Menu
 				anchorEl={anchorEl}
-				id='account-menu'
+				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+				id='colorSchemeSelectorMenu'
 				open={open}
 				onClose={handleClose}
 				onClick={handleClose}
@@ -68,9 +70,7 @@ export default function ColorSchemeSelector(props: IconButtonOwnProps) {
 							my: '4px',
 						},
 					},
-				}}
-				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
+				}}>
 				<MenuItem selected={mode === 'system'} onClick={handleMode('system')}>
 					System
 				</MenuItem>
