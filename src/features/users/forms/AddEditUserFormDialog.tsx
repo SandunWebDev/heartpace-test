@@ -13,16 +13,16 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { faker } from '@faker-js/faker';
 
-import { useAppDispatch, useAppSelector } from '../../services/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../services/redux/hooks';
 import {
 	usersActions,
 	usersSelectors,
-} from '../../services/redux/slices/users/usersSlice';
-import { Gender } from '../../services/mockServer/server';
-import { countryList } from '../../utils/countryList';
-import FormikTextField from '../../components/formikFields/FormikTextField';
-import FormDialog from '../../components/dialogs/FormDialog';
-import { User } from '../../services/mockServer/server';
+} from '../../../services/redux/slices/users/usersSlice';
+import { Gender } from '../../../services/mockServer/server';
+import { countryList } from '../../../utils/countryList';
+import FormikTextField from '../../../components/formikFields/FormikTextField';
+import FormDialog from '../../../components/dialogs/FormDialog';
+import { User } from '../../../services/mockServer/server';
 
 // Some default error texts that will be used with yup validations.
 export const errorTexts = {

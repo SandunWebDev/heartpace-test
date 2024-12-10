@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import Users from './Users';
+import Users from '../../features/users/Users';
 
 export default function Home() {
 	return (

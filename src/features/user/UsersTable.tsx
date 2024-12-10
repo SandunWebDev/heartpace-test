@@ -47,7 +47,7 @@ import startCase from 'lodash/startCase';
 import { User } from '../../services/mockServer/server';
 import { FetchStatus } from '../../services/redux/types';
 import AddEditUserFormDialog from './AddEditUserFormDialog';
-import DeleteUserFormDialog from './DeleteUserFormDialog';
+import DeleteUserFormDialog from './forms/DeleteUserFormDialog';
 import UsersAgeGroupVsGenderChart from './UsersAgeGroupVsGenderChart';
 import UsersCountryChart from './UsersCountryChart';
 
