@@ -282,7 +282,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 
 	const rowVirtualizer = useVirtualizer({
 		count: rows.length,
-		estimateSize: () => 33, // estimate row height for accurate scrollbar dragging
+		estimateSize: () => 73, // estimate row height for accurate scrollbar dragging
 		getScrollElement: () => tableContainerRef.current,
 		// Measure dynamic row height, except in firefox because it measures table border height incorrectly
 		measureElement:
