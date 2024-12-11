@@ -50,14 +50,6 @@ export default function createMockServer() {
 					faker.seed(i);
 					return faker.string.uuid();
 				},
-				firstName(i) {
-					faker.seed(i);
-					return faker.person.firstName();
-				},
-				lastName(i) {
-					faker.seed(i);
-					return faker.person.lastName();
-				},
 				gender(i) {
 					faker.seed(i);
 
@@ -66,7 +58,14 @@ export default function createMockServer() {
 						faker.person.sex() as Gender,
 						'other',
 					]);
-					return faker.person.sex() as Gender;
+				},
+				firstName(i) {
+					faker.seed(i);
+					return faker.person.firstName(faker.person.sexType());
+				},
+				lastName(i) {
+					faker.seed(i);
+					return faker.person.lastName(faker.person.sexType());
 				},
 				birthDate(i) {
 					faker.seed(i);
@@ -85,21 +84,26 @@ export default function createMockServer() {
 
 					// NOTE : Using "arrayElement" to return some entry without phone number. (As null)
 					return faker.helpers.arrayElement([
-						faker.phone.number({ style: 'international' }),
-						faker.phone.number({ style: 'international' }),
-						faker.phone.number({ style: 'international' }),
+						faker.phone.number({ style: 'national' }),
+						faker.phone.number({ style: 'national' }),
+						faker.phone.number({ style: 'national' }),
 						null,
 					]);
 				},
 				email(i) {
 					faker.seed(i);
-					return faker.internet.email();
+					return faker.internet.email({
+						firstName: this.firstName as string,
+						lastName: this.lastName as string,
+					});
 				},
 				address(i) {
+					// NOTE : As of now city is not realted to selected "city & country"
 					faker.seed(i);
 					return faker.location.streetAddress();
 				},
 				city(i) {
+					// NOTE : As of now city is not realted to selected "country"
 					faker.seed(i);
 					return faker.location.city();
 				},
@@ -111,7 +115,7 @@ export default function createMockServer() {
 		},
 
 		seeds(server) {
-			for (let i = 0; i < 1000; i++) {
+			for (let i = 0; i < 50; i++) {
 				server.create('user');
 			}
 
