@@ -55,10 +55,10 @@ export default function ColorSchemeSelector(props: IconButtonOwnProps) {
 			</IconButton>
 
 			<Menu
+				id='colorSchemeSelectorMenu'
 				anchorEl={anchorEl}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-				id='colorSchemeSelectorMenu'
 				open={open}
 				onClose={handleClose}
 				onClick={handleClose}

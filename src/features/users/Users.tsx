@@ -13,7 +13,7 @@ import {
 	usersSelectors,
 } from '../../services/redux/slices/users/usersSlice';
 import LoadingView from '../../components/loaders/LoadingView';
-import UsersTable from './UsersTable';
+import UsersTable from './tables/UsersTable';
 
 export default function Users() {
 	const dispatch = useAppDispatch();
@@ -50,11 +50,7 @@ export default function Users() {
 			/>
 
 			{!isDataLoading && !isDataLoadingError && (
-				<UsersTable
-					userList={userList}
-					getAllUsersReqStatus={getAllUsersReqStatus}
-					getAllUsersReqError={getAllUsersReqError}
-				/>
+				<UsersTable userList={userList} />
 			)}
 		</Box>
 	);

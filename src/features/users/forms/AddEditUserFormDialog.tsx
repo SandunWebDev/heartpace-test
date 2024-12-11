@@ -10,8 +10,8 @@ import { useTheme } from '@mui/material/styles';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
 import { faker } from '@faker-js/faker';
+import * as Yup from 'yup';
 
 import {
 	useAppDispatch,
@@ -80,7 +80,7 @@ const userFormValidationScheme = Yup.object().shape({
 
 export interface AddEditUserFormDialog {
 	formMode: 'ADD' | 'EDIT';
-	editUserCurrentData: User;
+	editUserCurrentData?: User | Record<string, never>;
 	onClose: () => void;
 	open: boolean;
 }
@@ -153,7 +153,6 @@ export default function AddEditUserFormDialog({
 								...formData,
 								id: faker.string.uuid(),
 								birthDate: new Date(formData.birthDate as string),
-								gender: formData.gender,
 							};
 
 							await dispatch(

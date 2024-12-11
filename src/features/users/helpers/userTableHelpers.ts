@@ -1,6 +1,29 @@
-import { FilterFn, SortingFn, sortingFns } from '@tanstack/react-table';
+import {
+	FilterFn,
+	SortingFn,
+	RowData,
+	sortingFns,
+} from '@tanstack/react-table';
+import { RankingInfo } from '@tanstack/match-sorter-utils';
 import { rankItem, compareItems } from '@tanstack/match-sorter-utils';
 import { format } from 'date-fns';
+
+declare module '@tanstack/react-table' {
+	// Types that allows us to define custom properties for our columns in "meta" property.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	interface ColumnMeta<TData extends RowData, TValue> {
+		filterVariant?: 'text' | 'range';
+	}
+
+	// Add fuzzy filter to the filterFns list
+	interface FilterFns {
+		fuzzy: FilterFn<unknown>;
+	}
+	interface FilterMeta {
+		itemRank: RankingInfo;
+	}
+}
+
 // Convert birttDate value to specific display format.
 export function birthDateStringFormatter(birthDate: string) {
 	const date = new Date(birthDate);

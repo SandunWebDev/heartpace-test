@@ -28,12 +28,6 @@ export default function FormikTextField({
 				</FormLabel>
 				<LocalizationProvider dateAdapter={AdapterDateFns}>
 					<DatePicker
-						{...field}
-						{...props}
-						value={new Date(field.value as string)}
-						onChange={(value) => {
-							setFieldValue(field.name, value);
-						}}
 						slotProps={{
 							textField: {
 								variant: 'outlined',
@@ -42,6 +36,12 @@ export default function FormikTextField({
 								error: Boolean(meta.touched && meta.error),
 								helperText: meta.touched && meta.error,
 							},
+						}}
+						{...field}
+						{...props}
+						value={new Date(field.value as string)}
+						onChange={(value) => {
+							setFieldValue(field.name, value);
 						}}
 					/>
 				</LocalizationProvider>

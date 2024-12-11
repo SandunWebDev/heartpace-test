@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
+// For now we are only extracting relevant error message for convenience.
 function handleAxiosError(error: any): string {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 	return (error?.response?.data?.message ||

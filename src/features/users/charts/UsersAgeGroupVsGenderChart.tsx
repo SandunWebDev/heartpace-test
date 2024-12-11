@@ -18,7 +18,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Payload } from 'recharts/types/component/DefaultLegendContent';
 import startCase from 'lodash/startCase';
 
-import { UserListWithAddiData } from '../UsersTable';
+import { UserListWithAddiData } from '../tables/UsersTable';
 
 const geenrateChartData = (
 	filteredUserRows: UserListWithAddiData[],

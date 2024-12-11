@@ -1,10 +1,7 @@
-import { useMemo, useRef, useState, useCallback } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
-	Column,
 	ColumnDef,
 	ColumnFiltersState,
-	RowData,
-	FilterFn,
 	flexRender,
 	getCoreRowModel,
 	getSortedRowModel,
@@ -15,7 +12,6 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { RankingInfo } from '@tanstack/match-sorter-utils';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -23,46 +19,26 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
 import Fab from '@mui/material/Fab';
 import Typography from '@mui/material/Typography';
-import Autocomplete from '@mui/material/Autocomplete';
-import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
-import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { differenceInYears } from 'date-fns';
-import debounce from 'lodash/debounce';
 import startCase from 'lodash/startCase';
 
+import { User } from '../../../services/mockServer/server';
+import AddEditUserFormDialog from '../forms/AddEditUserFormDialog';
+import DeleteUserFormDialog from '../forms/DeleteUserFormDialog';
+import UsersAgeGroupVsGenderChart from '../charts/UsersAgeGroupVsGenderChart';
+import UsersCountryChart from '../charts/UsersCountryChart';
+import UsersSearch from '../other/UsersSearch';
+import UsersColumnFilter from '../other/UsersColumnFilter';
 import {
 	birthDateStringFormatter,
 	fuzzyFilter,
-} from './helpers/userTableHelpers';
-import { User } from '../../services/mockServer/server';
-import AddEditUserFormDialog from './forms/AddEditUserFormDialog';
-import DeleteUserFormDialog from './forms/DeleteUserFormDialog';
-import UsersAgeGroupVsGenderChart from './charts/UsersAgeGroupVsGenderChart';
-import UsersCountryChart from './charts/UsersCountryChart';
-
-declare module '@tanstack/react-table' {
-	// Types that allows us to define custom properties for our columns in "meta" property.
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	interface ColumnMeta<TData extends RowData, TValue> {
-		filterVariant?: 'text' | 'range';
-	}
-
-	// Add fuzzy filter to the filterFns list
-	interface FilterFns {
-		fuzzy: FilterFn<unknown>;
-	}
-	interface FilterMeta {
-		itemRank: RankingInfo;
-	}
-}
+} from '../helpers/userTableHelpers';
 
 export interface UserListWithAddiData extends User {
 	age: number;
@@ -75,13 +51,17 @@ export interface UsersTableProps {
 export default function UsersTable({ userList }: UsersTableProps) {
 	const [addUserFormDialogOpenStatus, setAddUserFormDialogOpenStatus] =
 		useState(false);
+
 	const [editUserFormDialogOpenStatus, setEditUserFormDialogOpenStatus] =
 		useState(false);
-	const [editUserCurrentData, setEditUserCurrentData] = useState(null);
+	const [editUserCurrentData, setEditUserCurrentData] =
+		useState<UserListWithAddiData | null>(null);
 
 	const [deleteUserFormDialogOpenStatus, setDeleteUserFormDialogOpenStatus] =
 		useState(false);
-	const [deleteUserCurrentId, setDeleteUserCurrentId] = useState(null);
+	const [deleteUserCurrentId, setDeleteUserCurrentId] = useState<
+		UserListWithAddiData['id'] | null
+	>(null);
 
 	// Addding some addtional calulated properties. (age)
 	const userListWithAddiData: UserListWithAddiData[] = useMemo(() => {
@@ -146,7 +126,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 						</Typography>
 					);
 				},
-				size: 100,
+				size: 150,
 				sortingFn: 'alphanumericCaseSensitive',
 			},
 			{
@@ -177,6 +157,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 				cell: (info) => {
 					return birthDateStringFormatter(info.getValue() as string);
 				},
+				size: 175,
 				sortingFn: 'datetime',
 				sortUndefined: -1,
 			},
@@ -186,7 +167,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 				cell: (info) => info.getValue(),
 				size: 250,
 				sortingFn: 'alphanumericCaseSensitive',
-				sortUndefined: -1, // Sorting "undefined/null" first in ascending order.
+				sortUndefined: -1,
 				meta: {
 					filterVariant: 'range',
 				},
@@ -271,7 +252,6 @@ export default function UsersTable({ userList }: UsersTableProps) {
 	});
 
 	const { rows } = table.getRowModel();
-
 	const filteredUserRows = useMemo(
 		() => rows.map((item) => item.original),
 		[rows],
@@ -436,7 +416,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 
 												<div>
 													{header.column.getCanFilter() ? (
-														<ColumnFilter column={header.column} />
+														<UsersColumnFilter column={header.column} />
 													) : null}
 												</div>
 											</div>
@@ -512,170 +492,5 @@ export default function UsersTable({ userList }: UsersTableProps) {
 				/>
 			</Box>
 		</Box>
-	);
-}
-
-function ColumnFilter({ column }: { column: Column<any, unknown> }) {
-	const { filterVariant } = column.columnDef.meta ?? {};
-
-	const columnFilterValue = column.getFilterValue();
-
-	const sortedUniqueValues = useMemo(
-		() =>
-			Array.from(column.getFacetedUniqueValues().keys())
-				.sort()
-				.slice(0, 2000)
-				.filter((n) => n), // Remove null, undefined values
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[column.getFacetedUniqueValues(), filterVariant],
-	);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedSetFacetedUniqueFilterValue = useCallback(
-		debounce((changedValue: string | number) => {
-			column.setFilterValue(changedValue);
-		}, 200),
-		[],
-	);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedSetFacetedMinMaxFilterMinValue = useCallback(
-		debounce((changedValue: string | number) => {
-			column.setFilterValue((old: [number, number]) => [
-				changedValue,
-				old?.[1],
-			]);
-		}, 200),
-		[],
-	);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedSetFacetedMinMaxFilterMaxValue = useCallback(
-		debounce((changedValue: string | number) => {
-			column.setFilterValue((old: [number, number]) => [
-				old?.[0],
-				changedValue,
-			]);
-		}, 200),
-		[],
-	);
-
-	if (filterVariant === 'range') {
-		return (
-			<Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-				<Autocomplete
-					freeSolo
-					fullWidth
-					size='small'
-					value={(columnFilterValue as [number, number])?.[0] ?? ''}
-					options={[]}
-					onChange={(_e, changedValue) => {
-						return debouncedSetFacetedMinMaxFilterMinValue(changedValue ?? '');
-					}}
-					onInputChange={(_e, changedValue) => {
-						return debouncedSetFacetedMinMaxFilterMinValue(changedValue);
-					}}
-					renderInput={(params) => (
-						<TextField {...params} type='number' placeholder={`Min`} />
-					)}
-				/>
-				{'	: '}
-				<Autocomplete
-					freeSolo
-					fullWidth
-					size='small'
-					value={(columnFilterValue as [number, number])?.[1] ?? ''}
-					options={[]}
-					onChange={(_e, changedValue) => {
-						return debouncedSetFacetedMinMaxFilterMaxValue(changedValue ?? '');
-					}}
-					onInputChange={(_e, changedValue) => {
-						return debouncedSetFacetedMinMaxFilterMaxValue(changedValue);
-					}}
-					renderInput={(params) => (
-						<TextField {...params} type='number' placeholder={`Max`} />
-					)}
-				/>
-			</Box>
-		);
-	}
-	// "text" type. Which is the default.
-	else {
-		return (
-			<Autocomplete
-				freeSolo
-				fullWidth
-				size='small'
-				value={columnFilterValue ?? ''}
-				options={sortedUniqueValues}
-				renderOption={(props, option) => {
-					// This is needed beacuse we need to show "birthDate" column value in easy human readable format.
-					// Don't use similar "getOptionLabel" for this. Beacuse it add bugs to search result.
-
-					// eslint-disable-next-line react/prop-types
-					const { key, ...remainingProps } = props;
-
-					let formattedOption;
-					const columnName = column.id;
-					if (columnName === 'birthDate' && option) {
-						formattedOption = birthDateStringFormatter(option as string);
-					} else {
-						formattedOption = option as string;
-					}
-					return (
-						<Box key={key as string} {...remainingProps}>
-							{formattedOption}
-						</Box>
-					);
-				}}
-				onChange={(_e, changedValue) => {
-					return column.setFilterValue(changedValue);
-				}}
-				onInputChange={(_e, changedValue) => {
-					return debouncedSetFacetedUniqueFilterValue(changedValue);
-				}}
-				renderInput={(params) => <TextField {...params} />}
-			/>
-		);
-	}
-}
-
-function UsersSearch({
-	value,
-	onChange,
-	onClose,
-}: {
-	value: string;
-	onChange: (value: string) => void;
-	onClose?: () => void;
-}) {
-	return (
-		<TextField
-			fullWidth
-			size='medium'
-			variant='filled'
-			value={value}
-			onChange={(e) => {
-				onChange(e.target.value);
-			}}
-			placeholder='Fuzzy Search Users'
-			slotProps={{
-				input: {
-					startAdornment: (
-						<InputAdornment position='start'>
-							<PersonSearchIcon sx={{ fontSize: '30px' }} />
-						</InputAdornment>
-					),
-					endAdornment: (
-						<InputAdornment
-							position='end'
-							sx={{ display: value ? 'flex' : 'none', cursor: 'pointer' }}
-							onClick={onClose}>
-							<CloseSharpIcon />
-						</InputAdornment>
-					),
-				},
-			}}
-		/>
 	);
 }
