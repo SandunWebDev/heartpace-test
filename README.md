@@ -18,7 +18,7 @@ This is a minimal dashboard application created as part of the take-home test fo
 - React Table
 - Formik
 - Recharts
-- Axios, DateFns, Lodash, ReactToast
+- Axios, DateFns, Lodash, ReactToast, Faker
 - ESLint, Prettier, Vite
 
 ## How To Run Locally

@@ -3,6 +3,8 @@ import { ModelDefinition } from 'miragejs/-types';
 import Schema from 'miragejs/orm/schema';
 import { faker } from '@faker-js/faker';
 
+import { preCreatedFakerUserList } from './userList';
+
 export type Gender = 'male' | 'female' | 'other';
 export interface User {
 	id: string;
@@ -115,18 +117,20 @@ export default function createMockServer() {
 		},
 
 		seeds(server) {
-			for (let i = 0; i < 50; i++) {
-				server.create('user');
-			}
+			// Below is to create "x" number of faker user entries according to above factory.
+			// But creating large list of items take some time. So if we use this approach, app start up take some time and app look slow.
+			// for (let i = 0; i < 5000; i++) {
+			// 	server.create('user');
+			// }
 
-			// Below can be used if we want to load data from external data source.
-			// server.db.loadData({
-			// 	users: usersList,
-			// });
+			// So we have stored pre created faker data in a file and directly loading it to seed in here.
+			server.db.loadData({
+				users: preCreatedFakerUserList,
+			});
 		},
 
 		routes() {
-			this.timing = 1000; // Simulate loading times
+			this.timing = 500; // Simulate loading times
 
 			this.get('/api/users', (schema: AppSchema) => {
 				return schema.all('user');
