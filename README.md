@@ -27,7 +27,7 @@ This is a minimal dashboard application created as part of the take-home test fo
 - Changed into the cloned project folder. `cd heartpace-test`
 - Install dependencies of the project. `npm install`
 - Start the project. `npm start`
-- Visit locall started server. `http://localhost:5173/`
+- Visit locally started server. [http://localhost:5173/](http://localhost:5173/)
 
 ## Live Deployment
 
