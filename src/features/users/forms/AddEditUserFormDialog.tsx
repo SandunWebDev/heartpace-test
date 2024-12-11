@@ -13,7 +13,11 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { faker } from '@faker-js/faker';
 
-import { useAppDispatch, useAppSelector } from '../../../services/redux/hooks';
+import {
+	useAppDispatch,
+	useAppSelector,
+	shallowEqual,
+} from '../../../services/redux/hooks';
 import {
 	usersActions,
 	usersSelectors,
@@ -93,9 +97,11 @@ export default function AddEditUserFormDialog({
 	const dispatch = useAppDispatch();
 	const { addUserReqError } = useAppSelector(
 		usersSelectors.selectAddUserReqState,
+		shallowEqual,
 	);
 	const { editUserReqError } = useAppSelector(
 		usersSelectors.selectEditUserReqState,
+		shallowEqual,
 	);
 
 	const userFormDefaultValues = {

@@ -3,7 +3,11 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import PeopleIcon from '@mui/icons-material/People';
 
-import { useAppDispatch, useAppSelector } from '../../services/redux/hooks';
+import {
+	useAppDispatch,
+	useAppSelector,
+	shallowEqual,
+} from '../../services/redux/hooks';
 import {
 	usersActions,
 	usersSelectors,
@@ -14,7 +18,7 @@ import UsersTable from './UsersTable';
 export default function Users() {
 	const dispatch = useAppDispatch();
 	const { userList, getAllUsersReqStatus, getAllUsersReqError } =
-		useAppSelector(usersSelectors.selectGetAllUsersReqState);
+		useAppSelector(usersSelectors.selectGetAllUsersReqState, shallowEqual);
 
 	useEffect(() => {
 		dispatch(usersActions.getAllUsers());

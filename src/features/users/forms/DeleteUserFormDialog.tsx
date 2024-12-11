@@ -6,7 +6,11 @@ import { useTheme } from '@mui/material/styles';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
-import { useAppDispatch, useAppSelector } from '../../../services/redux/hooks';
+import {
+	useAppDispatch,
+	useAppSelector,
+	shallowEqual,
+} from '../../../services/redux/hooks';
 import {
 	usersActions,
 	usersSelectors,
@@ -30,6 +34,7 @@ export default function DeleteUserFormDialog({
 	const dispatch = useAppDispatch();
 	const { deleteUserReqStatus, deleteUserReqError } = useAppSelector(
 		usersSelectors.selectDeleteUserReqState,
+		shallowEqual,
 	);
 
 	if (!open) {
