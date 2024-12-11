@@ -3,6 +3,7 @@ import { ModelDefinition } from 'miragejs/-types';
 import Schema from 'miragejs/orm/schema';
 import { faker } from '@faker-js/faker';
 
+import { countryList } from '../../utils/countryList';
 import { preCreatedFakerUserList } from './userList';
 
 export type Gender = 'male' | 'female' | 'other';
@@ -39,6 +40,8 @@ type AppRegistry = Registry<
 	{}
 >;
 type AppSchema = Schema<AppRegistry>;
+
+const allCountryNames = countryList.map((country) => country.name);
 
 export default function createMockServer() {
 	return new Server({
@@ -111,7 +114,7 @@ export default function createMockServer() {
 				},
 				country(i) {
 					faker.seed(i);
-					return faker.location.country();
+					return faker.helpers.arrayElement(allCountryNames);
 				},
 			}),
 		},

@@ -22,10 +22,10 @@ import {
 	usersActions,
 	usersSelectors,
 } from '../../../services/redux/slices/users/usersSlice';
-import { countryList } from '../../../utils/countryList';
 import FormikTextField from '../../../components/formikFields/FormikTextField';
 import FormDialog from '../../../components/dialogs/FormDialog';
 import { User } from '../../../services/mockServer/server';
+import { countryList } from '../../../utils/countryList';
 import { errorTexts } from '../helpers/formHelpers';
 
 const userFormValidationScheme = Yup.object().shape({
@@ -52,7 +52,7 @@ const userFormValidationScheme = Yup.object().shape({
 	jobTitle: Yup.string().trim().max(100, errorTexts.maxChars(100)).optional(),
 
 	phone: Yup.string()
-		.matches(/^\+?[0-9][0-9\s-]{0,14}$/, 'Invalid phone number format')
+		.matches(/^\+?[0-9\s\-()]{1,15}$/, 'Invalid phone number format')
 		.nullable(),
 
 	email: Yup.string()
@@ -321,7 +321,7 @@ export default function AddEditUserFormDialog({
 										size='small'>
 										{countryList.map((country, index) => (
 											<MenuItem key={index} value={country.name}>
-												{country.name}
+												{country.emoji} {country.name}
 											</MenuItem>
 										))}
 									</FormikTextField>

@@ -64,6 +64,7 @@ export default function FormikTextField({
 				helperText={meta.touched && meta.error}
 				{...field}
 				{...props}
+				value={field.value ?? ''}
 			/>
 		</>
 	);
