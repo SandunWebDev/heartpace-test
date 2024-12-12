@@ -13,9 +13,13 @@ import {
 	usersSelectors,
 } from '../../services/redux/slices/users/usersSlice';
 import LoadingView from '../../components/loaders/LoadingView';
+import UsersStatus from './other/UsersStatus';
+import UsersAddButton from './other/UsersAddButton';
+import UsersSearch from './other/UsersSearch';
 import UsersAgeGroupVsGenderChart from './charts/UsersAgeGroupVsGenderChart';
 import UsersCountryChart from './charts/UsersCountryChart';
 import UsersTable from './tables/UsersTable';
+import { UserWithExtraData } from '../../services/mockServer/server';
 
 export default function Users() {
 	const dispatch = useAppDispatch();
@@ -24,6 +28,13 @@ export default function Users() {
 	const filteredUserList = useAppSelector(
 		usersSelectors.selectFilteredUserList,
 	);
+	const globalFilter = useAppSelector(usersSelectors.selectGlobalFilter);
+	const setGlobalFilter = (value: string) => {
+		dispatch(usersActions.setGlobalFilter(value));
+	};
+	const setFilteredUserList = (filteredUserList: UserWithExtraData[]) => {
+		dispatch(usersActions.setFilteredUserList(filteredUserList));
+	};
 
 	useEffect(() => {
 		dispatch(usersActions.getAllUsers());
@@ -55,8 +66,38 @@ export default function Users() {
 			/>
 
 			{!isDataLoading && !isDataLoadingError && (
-				<>
-					<UsersTable userList={userList} />
+				<Box>
+					<Typography variant='h6' gutterBottom>
+						Users List
+					</Typography>
+
+					<Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+						<UsersStatus
+							totalUserAmount={userList.length}
+							filteredUserAmount={filteredUserList.length}
+						/>
+
+						<UsersAddButton />
+					</Box>
+
+					<Box sx={{ margin: '30px 0 30px 0' }}>
+						<UsersSearch
+							value={globalFilter}
+							onChange={(value) => {
+								dispatch(usersActions.setGlobalFilter(value));
+							}}
+							onClose={() => {
+								dispatch(usersActions.setGlobalFilter(''));
+							}}
+						/>
+					</Box>
+
+					<UsersTable
+						userList={userList}
+						globalFilter={globalFilter}
+						setGlobalFilter={setGlobalFilter}
+						setFilteredUserList={setFilteredUserList}
+					/>
 
 					<Box
 						sx={(theme) => {
@@ -80,7 +121,7 @@ export default function Users() {
 							filteredUserRows={filteredUserList}
 						/>
 					</Box>
-				</>
+				</Box>
 			)}
 		</Box>
 	);

@@ -9,7 +9,9 @@ const { getAllUsers, addUser, editUser, deleteUser } = asyncUsersActions;
 
 export interface UsersState {
 	userList: User[];
-	filteredUserList: UserWithExtraData	[];
+	filteredUserList: UserWithExtraData[];
+	globalFilter: string;
+
 	getAllUsersReqStatus: FetchStatus;
 	getAllUsersReqError: string | null;
 
@@ -26,6 +28,8 @@ export interface UsersState {
 const initialState: UsersState = {
 	userList: [],
 	filteredUserList: [],
+	globalFilter: '',
+
 	getAllUsersReqStatus: 'IDLE',
 	getAllUsersReqError: null,
 
@@ -45,6 +49,9 @@ export const usersSlice = createSlice({
 	reducers: {
 		setFilteredUserList(state, action) {
 			state.filteredUserList = action.payload;
+		},
+		setGlobalFilter(state, action) {
+			state.globalFilter = action.payload;
 		},
 	},
 	extraReducers: (builder) => {

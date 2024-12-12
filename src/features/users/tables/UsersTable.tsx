@@ -19,21 +19,16 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Fab from '@mui/material/Fab';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { differenceInYears } from 'date-fns';
 import startCase from 'lodash/startCase';
 
-import { useAppDispatch } from '../../../services/redux/hooks';
-import { usersActions } from '../../../services/redux/slices/users/usersSlice';
 import { User, UserWithExtraData } from '../../../services/mockServer/server';
 import AddEditUserFormDialog from '../forms/AddEditUserFormDialog';
 import DeleteUserFormDialog from '../forms/DeleteUserFormDialog';
-import UsersSearch from '../other/UsersSearch';
 import UsersColumnFilter from '../other/UsersColumnFilter';
 import {
 	birthDateStringFormatter,
@@ -42,14 +37,17 @@ import {
 
 export interface UsersTableProps {
 	userList: User[];
+	globalFilter: string;
+	setGlobalFilter: (value: string) => void;
+	setFilteredUserList: (filteredUserList: UserWithExtraData[]) => void;
 }
 
-export default function UsersTable({ userList }: UsersTableProps) {
-	const dispatch = useAppDispatch();
-
-	const [addUserFormDialogOpenStatus, setAddUserFormDialogOpenStatus] =
-		useState(false);
-
+export default function UsersTable({
+	userList,
+	globalFilter,
+	setGlobalFilter,
+	setFilteredUserList,
+}: UsersTableProps) {
 	const [editUserFormDialogOpenStatus, setEditUserFormDialogOpenStatus] =
 		useState(false);
 	const [editUserCurrentData, setEditUserCurrentData] =
@@ -224,7 +222,6 @@ export default function UsersTable({ userList }: UsersTableProps) {
 	);
 
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-	const [globalFilter, setGlobalFilter] = useState('');
 
 	const table = useReactTable({
 		data: userListWithAddiData,
@@ -250,11 +247,13 @@ export default function UsersTable({ userList }: UsersTableProps) {
 		getFacetedMinMaxValues: getFacetedMinMaxValues(),
 
 		onStateChange: () => {
-			const filteredColumns = table
-				.getFilteredRowModel()
-				.rows.map((row) => row.original);
+			if (setFilteredUserList) {
+				const filteredColumns = table
+					.getFilteredRowModel()
+					.rows.map((row) => row.original);
 
-			dispatch(usersActions.setFilteredUserList(filteredColumns));
+				setFilteredUserList(filteredColumns);
+			}
 		},
 	});
 
@@ -278,14 +277,6 @@ export default function UsersTable({ userList }: UsersTableProps) {
 	const renderDialogs = (
 		<>
 			<AddEditUserFormDialog
-				formMode='ADD'
-				open={addUserFormDialogOpenStatus}
-				onClose={() => {
-					setAddUserFormDialogOpenStatus(false);
-				}}
-			/>
-
-			<AddEditUserFormDialog
 				formMode='EDIT'
 				editUserCurrentData={editUserCurrentData}
 				open={editUserFormDialogOpenStatus}
@@ -307,52 +298,6 @@ export default function UsersTable({ userList }: UsersTableProps) {
 	return (
 		<Box className='UsersTable'>
 			{renderDialogs}
-
-			<Typography variant='h6' gutterBottom>
-				Users List
-			</Typography>
-
-			<Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-				<Box
-					sx={{
-						display: 'inline-block',
-						border: '1.5px solid gray',
-						padding: '15px 25px',
-						borderRadius: '4px',
-					}}>
-					<Typography gutterBottom color='gray'>
-						Filtered/Total Users
-					</Typography>
-					<Typography variant='h5' component='div' sx={{ fontWeight: 'bold' }}>
-						{rows.length} / {userListWithAddiData.length}
-					</Typography>
-				</Box>
-
-				<Box
-					sx={{
-						marginLeft: 'auto',
-					}}>
-					<Fab
-						color='primary'
-						onClick={() => {
-							setAddUserFormDialogOpenStatus(true);
-						}}>
-						<PersonAddAltIcon />
-					</Fab>
-				</Box>
-			</Box>
-
-			<Box sx={{ margin: '30px 0 30px 0' }}>
-				<UsersSearch
-					value={globalFilter}
-					onChange={(value) => {
-						setGlobalFilter(value);
-					}}
-					onClose={() => {
-						setGlobalFilter('');
-					}}
-				/>
-			</Box>
 
 			<TableContainer
 				className='UsersTableContainer'

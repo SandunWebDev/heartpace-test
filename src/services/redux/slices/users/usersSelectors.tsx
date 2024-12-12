@@ -40,3 +40,7 @@ export const selectDeleteUserReqState = (state: RootState) => {
 export const selectFilteredUserList = (state: RootState) => {
 	return state.users.filteredUserList;
 };
+
+export const selectGlobalFilter = (state: RootState) => {
+	return state.users.globalFilter;
+};
