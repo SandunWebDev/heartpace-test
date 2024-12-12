@@ -4,8 +4,11 @@ import {
 	RowData,
 	sortingFns,
 } from '@tanstack/react-table';
-import { RankingInfo } from '@tanstack/match-sorter-utils';
-import { rankItem, compareItems } from '@tanstack/match-sorter-utils';
+import {
+	rankItem,
+	compareItems,
+	RankingInfo,
+} from '@tanstack/match-sorter-utils';
 import { format } from 'date-fns';
 
 declare module '@tanstack/react-table' {
@@ -30,11 +33,14 @@ export function birthDateStringFormatter(birthDate: string) {
 	return format(date, 'yyyy-MM-dd');
 }
 
-// Custom Fuzzy Filter to filter globally.
+// Custom Fuzzy Filter to filter things.
 // It filter and sort by the rank information of "rankItem Lib" store the ranking information in the meta data of the row, and return whether the item passed the ranking criteria.
 // Essentially this can be used to filter row by their closest matches to the search query.
 export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-	const itemRank = rankItem(row.getValue(columnId), value as string);
+	const itemRank = rankItem(row.getValue(columnId), value as string, {
+		threshold: 4, // WORD_STARTS_WITH
+	});
+
 	addMeta({ itemRank }); // Store the itemRank info
 	return itemRank.passed; // Return if the item should be filtered in/out
 };

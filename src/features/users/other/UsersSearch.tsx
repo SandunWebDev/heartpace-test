@@ -21,7 +21,7 @@ export default function UsersSearch({
 			onChange={(e) => {
 				onChange(e.target.value);
 			}}
-			placeholder='Fuzzy Search Users'
+			placeholder='Search Users'
 			slotProps={{
 				input: {
 					startAdornment: (
