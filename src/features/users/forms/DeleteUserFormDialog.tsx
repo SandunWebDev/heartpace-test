@@ -18,7 +18,7 @@ import {
 import FormDialog from '../../../components/dialogs/FormDialog';
 
 export interface DeleteUserFormDialog {
-	deleteUserCurrentId: string;
+	deleteUserCurrentId: string | null;
 	onClose: () => void;
 	open: boolean;
 }
@@ -36,6 +36,10 @@ export default function DeleteUserFormDialog({
 		usersSelectors.selectDeleteUserReqState,
 		shallowEqual,
 	);
+
+	if (!deleteUserCurrentId) {
+		return null;
+	}
 
 	if (!open) {
 		return null;

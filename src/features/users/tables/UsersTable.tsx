@@ -115,14 +115,15 @@ export default function UsersTable({ userList }: UsersTableProps) {
 				cell: (info) => {
 					return (
 						<Typography
+							component='div'
 							sx={{
 								overflow: 'hidden',
 								textOverflow: 'ellipsis',
 								maxWidth: '80px',
 								whiteSpace: 'nowrap',
 							}}
-							title={info.getValue()}>
-							{info.getValue()}
+							title={info.getValue<string>()}>
+							{info.getValue<string>()}
 						</Typography>
 					);
 				},
@@ -146,7 +147,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 			{
 				accessorKey: 'gender',
 				header: () => <span>Gender</span>,
-				cell: (info) => startCase(info.getValue()),
+				cell: (info) => startCase(info.getValue<string>()),
 				size: 100,
 				sortingFn: 'textCaseSensitive',
 				sortUndefined: -1,
@@ -155,7 +156,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 				accessorKey: 'birthDate',
 				header: () => <span>Birth Date</span>,
 				cell: (info) => {
-					return birthDateStringFormatter(info.getValue() as string);
+					return birthDateStringFormatter(info.getValue<string>());
 				},
 				size: 175,
 				sortingFn: 'datetime',

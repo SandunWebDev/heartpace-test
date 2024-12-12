@@ -123,7 +123,7 @@ export default function UsersColumnFilter({
 						formattedOption = startCase(optionValue);
 					}
 					return (
-						<Box key={key as string} {...remainingProps}>
+						<Box component='li' key={key as string} {...remainingProps}>
 							{formattedOption}
 						</Box>
 					);

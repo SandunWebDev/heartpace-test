@@ -6,6 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 export interface FormDialog extends DialogProps {
 	headerTitle: React.ReactNode;
+	onClose: () => void;
 }
 
 export default function FormDialog(props: FormDialog) {
@@ -31,7 +32,7 @@ export default function FormDialog(props: FormDialog) {
 				{headerTitle}
 
 				<IconButton
-					onClick={onClose}
+					onClick={() => onClose()}
 					sx={(theme) => ({
 						position: 'absolute',
 						right: 8,

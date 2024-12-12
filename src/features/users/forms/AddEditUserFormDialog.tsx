@@ -24,7 +24,7 @@ import {
 } from '../../../services/redux/slices/users/usersSlice';
 import FormikTextField from '../../../components/formikFields/FormikTextField';
 import FormDialog from '../../../components/dialogs/FormDialog';
-import { User } from '../../../services/mockServer/server';
+import { User, Gender } from '../../../services/mockServer/server';
 import { countryList } from '../../../utils/countryList';
 import { errorTexts } from '../helpers/formHelpers';
 
@@ -80,14 +80,14 @@ const userFormValidationScheme = Yup.object().shape({
 
 export interface AddEditUserFormDialog {
 	formMode: 'ADD' | 'EDIT';
-	editUserCurrentData?: User | Record<string, never>;
+	editUserCurrentData?: User | null;
 	onClose: () => void;
 	open: boolean;
 }
 
 export default function AddEditUserFormDialog({
 	formMode = 'ADD',
-	editUserCurrentData = {},
+	editUserCurrentData,
 	open,
 	onClose,
 }: AddEditUserFormDialog) {
@@ -153,6 +153,7 @@ export default function AddEditUserFormDialog({
 								...formData,
 								id: faker.string.uuid(),
 								birthDate: new Date(formData.birthDate as string),
+								gender: formData.gender as Gender,
 							};
 
 							await dispatch(
@@ -177,11 +178,13 @@ export default function AddEditUserFormDialog({
 						try {
 							const editUserData = {
 								...formData,
+								birthDate: new Date(formData.birthDate),
+								gender: formData.gender as Gender,
 							};
 
 							await dispatch(
 								usersActions.editUser({
-									userId: editUserData.id,
+									userId: editUserData.id!,
 									userData: editUserData,
 								}),
 							).then(unwrapResult);

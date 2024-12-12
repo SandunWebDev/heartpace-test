@@ -8,17 +8,17 @@ This is a minimal dashboard application created as part of the take-home test fo
 - Search/Filter users
 - See users data in several charts
 
-### Main Technologies Used
+### Main Packages Used
 
 - Reac
 - TypeScript
 - Redux
 - MaterialUI
-- MirageJS
+- MirageJS, Faker
 - React Table
 - Formik
 - Recharts
-- Axios, DateFns, Lodash, ReactToast, Faker
+- Axios, DateFns, Lodash, ReactToast
 - ESLint, Prettier, Vite
 
 ## How To Run Locally
