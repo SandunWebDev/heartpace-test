@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import type { FetchStatus } from '../../types';
-import { User } from '../../../mockServer/server';
+import { User, UserWithExtraData } from '../../../mockServer/server';
 import * as asyncUsersActions from './usersActions';
 import * as allUsersSelectors from './usersSelectors';
 
@@ -9,6 +9,7 @@ const { getAllUsers, addUser, editUser, deleteUser } = asyncUsersActions;
 
 export interface UsersState {
 	userList: User[];
+	filteredUserList: UserWithExtraData	[];
 	getAllUsersReqStatus: FetchStatus;
 	getAllUsersReqError: string | null;
 
@@ -24,6 +25,7 @@ export interface UsersState {
 
 const initialState: UsersState = {
 	userList: [],
+	filteredUserList: [],
 	getAllUsersReqStatus: 'IDLE',
 	getAllUsersReqError: null,
 
@@ -40,7 +42,11 @@ const initialState: UsersState = {
 export const usersSlice = createSlice({
 	name: 'users',
 	initialState,
-	reducers: {},
+	reducers: {
+		setFilteredUserList(state, action) {
+			state.filteredUserList = action.payload;
+		},
+	},
 	extraReducers: (builder) => {
 		builder
 			// getAllUsers

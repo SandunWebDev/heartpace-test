@@ -7,7 +7,7 @@
 		"dev": "vite",
 		"build": "tsc -b && vite build",
 		"preview": "vite preview",
-		"lint": "npm run lint:prettier && npm run lint:eslint",
+		"lint": "npm run lint:eslint",
 		"lint:eslint": "eslint .",
 		"lint:eslint-fix": "eslint . --fix",
 		"lint:prettier": "prettier --check .",

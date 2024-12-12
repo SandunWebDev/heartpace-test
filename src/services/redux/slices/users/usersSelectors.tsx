@@ -36,3 +36,7 @@ export const selectDeleteUserReqState = (state: RootState) => {
 		deleteUserReqError,
 	};
 };
+
+export const selectFilteredUserList = (state: RootState) => {
+	return state.users.filteredUserList;
+};

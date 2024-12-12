@@ -15,10 +15,10 @@ import { Payload } from 'recharts/types/component/DefaultLegendContent';
 import startCase from 'lodash/startCase';
 import countryList from 'country-locale-map';
 
-import { UserListWithAddiData } from '../tables/UsersTable';
+import { UserWithExtraData } from '../../../services/mockServer/server';
 
 const geenrateChartData = (
-	filteredUserRows: UserListWithAddiData[],
+	filteredUserRows: UserWithExtraData[],
 	colorMode: 'light' | 'dark',
 ) => {
 	const colors = {
@@ -68,7 +68,7 @@ const geenrateChartData = (
 export interface UsersAgeGroupVsGenderChartProps {
 	title?: ReactNode;
 	height?: CSSProperties['height'];
-	filteredUserRows: UserListWithAddiData[];
+	filteredUserRows: UserWithExtraData[];
 }
 
 export default function UsersAgeGroupVsGenderChart({

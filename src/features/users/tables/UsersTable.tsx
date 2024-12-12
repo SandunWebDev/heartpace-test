@@ -28,11 +28,11 @@ import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { differenceInYears } from 'date-fns';
 import startCase from 'lodash/startCase';
 
-import { User } from '../../../services/mockServer/server';
+import { useAppDispatch } from '../../../services/redux/hooks';
+import { usersActions } from '../../../services/redux/slices/users/usersSlice';
+import { User, UserWithExtraData } from '../../../services/mockServer/server';
 import AddEditUserFormDialog from '../forms/AddEditUserFormDialog';
 import DeleteUserFormDialog from '../forms/DeleteUserFormDialog';
-import UsersAgeGroupVsGenderChart from '../charts/UsersAgeGroupVsGenderChart';
-import UsersCountryChart from '../charts/UsersCountryChart';
 import UsersSearch from '../other/UsersSearch';
 import UsersColumnFilter from '../other/UsersColumnFilter';
 import {
@@ -40,31 +40,29 @@ import {
 	fuzzyFilter,
 } from '../helpers/userTableHelpers';
 
-export interface UserListWithAddiData extends User {
-	age: number;
-}
-
 export interface UsersTableProps {
 	userList: User[];
 }
 
 export default function UsersTable({ userList }: UsersTableProps) {
+	const dispatch = useAppDispatch();
+
 	const [addUserFormDialogOpenStatus, setAddUserFormDialogOpenStatus] =
 		useState(false);
 
 	const [editUserFormDialogOpenStatus, setEditUserFormDialogOpenStatus] =
 		useState(false);
 	const [editUserCurrentData, setEditUserCurrentData] =
-		useState<UserListWithAddiData | null>(null);
+		useState<UserWithExtraData | null>(null);
 
 	const [deleteUserFormDialogOpenStatus, setDeleteUserFormDialogOpenStatus] =
 		useState(false);
 	const [deleteUserCurrentId, setDeleteUserCurrentId] = useState<
-		UserListWithAddiData['id'] | null
+		UserWithExtraData['id'] | null
 	>(null);
 
 	// Addding some addtional calulated properties. (age)
-	const userListWithAddiData: UserListWithAddiData[] = useMemo(() => {
+	const userListWithAddiData: UserWithExtraData[] = useMemo(() => {
 		return userList.map((item) => {
 			const birthDate = new Date(item.birthDate);
 			const todayDate = new Date();
@@ -74,7 +72,7 @@ export default function UsersTable({ userList }: UsersTableProps) {
 		});
 	}, [userList]);
 
-	const columns = useMemo<ColumnDef<UserListWithAddiData>[]>(
+	const columns = useMemo<ColumnDef<UserWithExtraData>[]>(
 		() => [
 			{
 				id: 'actions',
@@ -250,13 +248,17 @@ export default function UsersTable({ userList }: UsersTableProps) {
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),
 		getFacetedMinMaxValues: getFacetedMinMaxValues(),
+
+		onStateChange: () => {
+			const filteredColumns = table
+				.getFilteredRowModel()
+				.rows.map((row) => row.original);
+
+			dispatch(usersActions.setFilteredUserList(filteredColumns));
+		},
 	});
 
 	const { rows } = table.getRowModel();
-	const filteredUserRows = useMemo(
-		() => rows.map((item) => item.original),
-		[rows],
-	);
 
 	// The virtualizer needs to know the scrollable container element
 	const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -469,29 +471,6 @@ export default function UsersTable({ userList }: UsersTableProps) {
 					</TableBody>
 				</Table>
 			</TableContainer>
-
-			<Box
-				sx={(theme) => {
-					return {
-						display: 'flex',
-						width: '100%',
-						marginTop: '45px',
-						paddingBottom: '35px',
-						gap: '80px',
-						[theme.breakpoints.down('lg')]: {
-							flexWrap: 'wrap',
-						},
-					};
-				}}>
-				<UsersAgeGroupVsGenderChart
-					title='Users By Age Group'
-					filteredUserRows={filteredUserRows}
-				/>
-				<UsersCountryChart
-					title='Users By Continent'
-					filteredUserRows={filteredUserRows}
-				/>
-			</Box>
 		</Box>
 	);
 }

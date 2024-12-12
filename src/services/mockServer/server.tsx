@@ -21,6 +21,10 @@ export interface User {
 	country: string;
 }
 
+export interface UserWithExtraData extends User {
+	age: number;
+}
+
 export interface MultiUserApiResponse {
 	users: User[];
 }

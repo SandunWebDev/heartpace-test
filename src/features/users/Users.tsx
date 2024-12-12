@@ -13,12 +13,17 @@ import {
 	usersSelectors,
 } from '../../services/redux/slices/users/usersSlice';
 import LoadingView from '../../components/loaders/LoadingView';
+import UsersAgeGroupVsGenderChart from './charts/UsersAgeGroupVsGenderChart';
+import UsersCountryChart from './charts/UsersCountryChart';
 import UsersTable from './tables/UsersTable';
 
 export default function Users() {
 	const dispatch = useAppDispatch();
 	const { userList, getAllUsersReqStatus, getAllUsersReqError } =
 		useAppSelector(usersSelectors.selectGetAllUsersReqState, shallowEqual);
+	const filteredUserList = useAppSelector(
+		usersSelectors.selectFilteredUserList,
+	);
 
 	useEffect(() => {
 		dispatch(usersActions.getAllUsers());
@@ -50,7 +55,32 @@ export default function Users() {
 			/>
 
 			{!isDataLoading && !isDataLoadingError && (
-				<UsersTable userList={userList} />
+				<>
+					<UsersTable userList={userList} />
+
+					<Box
+						sx={(theme) => {
+							return {
+								display: 'flex',
+								width: '100%',
+								marginTop: '45px',
+								paddingBottom: '35px',
+								gap: '80px',
+								[theme.breakpoints.down('lg')]: {
+									flexWrap: 'wrap',
+								},
+							};
+						}}>
+						<UsersAgeGroupVsGenderChart
+							title='Users By Age Group'
+							filteredUserRows={filteredUserList}
+						/>
+						<UsersCountryChart
+							title='Users By Continent'
+							filteredUserRows={filteredUserList}
+						/>
+					</Box>
+				</>
 			)}
 		</Box>
 	);
