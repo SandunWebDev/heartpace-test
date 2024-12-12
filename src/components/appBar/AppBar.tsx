@@ -91,7 +91,9 @@ export default function AppBar() {
 						edge='start'
 						color='inherit'
 						aria-label='open drawer'
-						sx={{ mr: 2 }}>
+						sx={{
+							display: 'none', // Temporally hiding this Hamburger icon for now. As we are currently not using it now.
+						}}>
 						<MenuIcon />
 					</IconButton>
 					<Typography
