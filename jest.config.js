@@ -41,7 +41,7 @@ const config = {
 			lines: 80,
 		},
 	},
-	coverageReporters: ['text'],
+	coverageReporters: ['text', 'html'],
 };
 
 export default config;
