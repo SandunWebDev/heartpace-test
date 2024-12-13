@@ -3,15 +3,16 @@ import globals from 'globals';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
+import tsEslint from 'typescript-eslint';
+import jest from 'eslint-plugin-jest';
 
-export default tseslint.config(
+export default tsEslint.config(
 	{ ignores: ['dist'] },
 	{
 		extends: [
 			js.configs.recommended,
-			...tseslint.configs.recommendedTypeChecked,
-			...tseslint.configs.stylisticTypeChecked,
+			...tsEslint.configs.recommendedTypeChecked,
+			...tsEslint.configs.stylisticTypeChecked,
 		],
 		files: ['**/*.{ts,tsx}'],
 		languageOptions: {
@@ -44,6 +45,23 @@ export default tseslint.config(
 			'@typescript-eslint/no-unsafe-return': 'off',
 			'@typescript-eslint/no-unsafe-call': 'off',
 			'@typescript-eslint/no-unsafe-assignment': 'off',
+			'react-refresh/only-export-components': 'off',
+		},
+	},
+
+	// Specific linting for testing files.
+	{
+		files: ['**/*.test.js', '**/*.test.ts', '**/*.test.tsx'],
+		plugins: { jest: jest },
+		languageOptions: {
+			globals: jest.environments.globals.globals,
+		},
+		rules: {
+			'jest/no-disabled-tests': 'warn',
+			'jest/no-focused-tests': 'error',
+			'jest/no-identical-title': 'error',
+			'jest/prefer-to-have-length': 'warn',
+			'jest/valid-expect': 'error',
 		},
 	},
 );

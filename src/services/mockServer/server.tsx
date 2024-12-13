@@ -33,8 +33,6 @@ export interface SingleUserApiResponse {
 	user: User;
 }
 
-// This error thrown just beacuse we are using non react items in React app.
-// eslint-disable-next-line react-refresh/only-export-components
 const UserModel: ModelDefinition<User> = Model.extend({});
 type AppRegistry = Registry<
 	{
