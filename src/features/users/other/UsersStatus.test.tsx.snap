@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UsersStatus Component snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="Toastify"
+  />
+  <div
+    class="MuiBox-root css-1qffmkz"
+  >
+    <p
+      class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom css-qrvgcz-MuiTypography-root"
+    >
+      Filtered/Total Users
+    </p>
+    <div
+      class="MuiTypography-root MuiTypography-h5 css-stnzmu-MuiTypography-root"
+    >
+      40 / 100
+    </div>
+  </div>
+</DocumentFragment>
+`;
