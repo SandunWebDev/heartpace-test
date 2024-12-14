@@ -25,7 +25,7 @@ export interface UsersState {
 	deleteUserReqError: string | null;
 }
 
-const initialState: UsersState = {
+export const initialState: UsersState = {
 	userList: [],
 	filteredUserList: [],
 	globalFilter: '',

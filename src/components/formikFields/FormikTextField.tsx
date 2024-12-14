@@ -35,6 +35,9 @@ export default function FormikTextField<Values>({
 						}}
 						slotProps={{
 							textField: {
+								// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+								// @ts-ignore
+								'data-testid': props['data-testid'],
 								variant: 'outlined',
 								fullWidth: true,
 								size: 'small',

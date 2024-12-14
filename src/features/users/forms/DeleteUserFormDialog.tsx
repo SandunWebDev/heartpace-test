@@ -32,12 +32,20 @@ export default function DeleteUserFormDialog({
 	const colorMode = theme.palette.mode;
 
 	const dispatch = useAppDispatch();
+	const { userList } = useAppSelector(
+		usersSelectors.selectGetAllUsersReqState,
+		shallowEqual,
+	);
 	const { deleteUserReqStatus, deleteUserReqError } = useAppSelector(
 		usersSelectors.selectDeleteUserReqState,
 		shallowEqual,
 	);
 
-	if (!deleteUserCurrentId) {
+	const deletingUserData = userList.find(
+		(user) => user.id === deleteUserCurrentId,
+	);
+
+	if (!deleteUserCurrentId || !deletingUserData) {
 		return null;
 	}
 
@@ -55,7 +63,13 @@ export default function DeleteUserFormDialog({
 			open={open}
 			onClose={onClose}>
 			<form>
-				<Box>Are you sure you want to delete this user?</Box>
+				<Box>
+					Are you sure you want to delete
+					<Box component={'span'} sx={{ fontWeight: 'bold', padding: '0 5px' }}>
+						{deletingUserData.firstName} {deletingUserData.lastName}
+					</Box>
+					?
+				</Box>
 
 				<Box
 					sx={{

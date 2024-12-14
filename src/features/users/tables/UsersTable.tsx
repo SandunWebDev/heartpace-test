@@ -59,7 +59,7 @@ export default function UsersTable({
 		UserWithExtraData['id'] | null
 	>(null);
 
-	// Addding some addtional calulated properties. (age)
+	// Adding some additional calculated properties. (age)
 	const userListWithAddiData: UserWithExtraData[] = useMemo(() => {
 		return userList.map((item) => {
 			const birthDate = new Date(item.birthDate);
@@ -79,6 +79,7 @@ export default function UsersTable({
 					return (
 						<Box sx={{ display: 'flex' }}>
 							<IconButton
+								aria-label='Edit User'
 								onClick={() => {
 									setEditUserCurrentData(() => {
 										setEditUserFormDialogOpenStatus(true);
@@ -89,6 +90,7 @@ export default function UsersTable({
 								<EditIcon />
 							</IconButton>
 							<IconButton
+								aria-label='Delete User'
 								sx={{ marginLeft: '-5px' }}
 								onClick={() => {
 									setDeleteUserCurrentId(() => {
@@ -341,8 +343,9 @@ export default function UsersTable({
 												};
 											}}
 											variant='head'>
-											<div style={{ width: '100%' }}>
+											<Box sx={{ width: '100%' }}>
 												<Box
+													data-testid='UsersTable__headerNameText'
 													onClick={header.column.getToggleSortingHandler()}
 													sx={{
 														width: '100%',
@@ -362,12 +365,12 @@ export default function UsersTable({
 													}[header.column.getIsSorted() as string] ?? null}
 												</Box>
 
-												<div>
+												<Box>
 													{header.column.getCanFilter() ? (
 														<UsersColumnFilter column={header.column} />
 													) : null}
-												</div>
-											</div>
+												</Box>
+											</Box>
 										</TableCell>
 									);
 								})}
@@ -385,6 +388,7 @@ export default function UsersTable({
 							const row = rows[virtualRow.index];
 							return (
 								<TableRow
+									data-testid='UsersTable__headerNameText'
 									data-index={virtualRow.index} // needed for dynamic row height measurement
 									ref={(node) => rowVirtualizer.measureElement(node)} // measure dynamic row height
 									key={row.id}

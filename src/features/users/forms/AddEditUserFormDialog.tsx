@@ -214,6 +214,7 @@ export default function AddEditUserFormDialog({
 								sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 								<Box>
 									<FormikTextField
+										data-testid='firstName'
 										label='First Name'
 										name='firstName'
 										type='text'
@@ -225,6 +226,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='lastName'
 										label='Last Name'
 										name='lastName'
 										type='text'
@@ -236,6 +238,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='gender'
 										select
 										label='Gender'
 										name='gender'
@@ -250,6 +253,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='birthDate'
 										label='Birth Date'
 										name='birthDate'
 										type='date'
@@ -262,6 +266,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='jobTitle'
 										label='Job Title'
 										name='jobTitle'
 										type='text'
@@ -272,6 +277,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='phone'
 										label='Phone'
 										name='phone'
 										type='tel'
@@ -282,6 +288,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='email'
 										label='Email'
 										name='email'
 										type='email'
@@ -293,6 +300,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='address'
 										label='Address'
 										name='address'
 										type='text'
@@ -304,6 +312,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='city'
 										label='City'
 										name='city'
 										type='text'
@@ -315,6 +324,7 @@ export default function AddEditUserFormDialog({
 
 								<Box>
 									<FormikTextField
+										data-testid='country'
 										select
 										label='Country'
 										name='country'

@@ -50,7 +50,7 @@ describe('UsersStatus Component', () => {
 	});
 
 	it('should be able to type values', async () => {
-		const user = userEvent.setup();
+		const fireUserEvent = userEvent.setup();
 		const mockOnChange = jest.fn();
 		const mockOnClose = jest.fn();
 
@@ -64,14 +64,14 @@ describe('UsersStatus Component', () => {
 
 		const input: HTMLInputElement = screen.getByPlaceholderText('Search Users');
 
-		await user.type(input, 'John');
+		await fireUserEvent.type(input, 'John');
 
 		expect(mockOnChange).toHaveBeenCalledTimes(4);
 		expect(input.value).toEqual('John');
 	});
 
 	it('should be able to clear existing value', async () => {
-		const user = userEvent.setup();
+		const fireUserEvent = userEvent.setup();
 		const mockOnChange = jest.fn();
 		const mockOnClose = jest.fn();
 
@@ -92,13 +92,13 @@ describe('UsersStatus Component', () => {
 		expect(closeButton).not.toBeVisible();
 
 		// After some value available on input.
-		await user.type(input, 'John');
+		await fireUserEvent.type(input, 'John');
 		expect(input.value).toEqual('John');
 		expect(closeButton).toBeVisible();
 		expect(closeButton).toBeInTheDocument();
 
 		// After close button is clicked
-		await user.click(closeButton);
+		await fireUserEvent.click(closeButton);
 		expect(input.value).toEqual('');
 		expect(closeButton).not.toBeVisible();
 		expect(mockOnClose).toHaveBeenCalledTimes(1);

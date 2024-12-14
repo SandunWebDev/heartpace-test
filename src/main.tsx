@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import createMockServer from './services/mockServer/server';
 import initializeAxios from './configs/axios';
 import MuiThemeProvider from './configs/theme/MuiThemeProvider';
-import { store } from './services/redux/store';
+import { setupStore } from './services/redux/store';
 import App from './App';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,11 +18,12 @@ import './main.css';
 
 createMockServer();
 initializeAxios();
+const reduxStore = setupStore();
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
 		<MuiThemeProvider>
-			<ReduxProvider store={store}>
+			<ReduxProvider store={reduxStore}>
 				<ToastContainer />
 				<App />
 			</ReduxProvider>
