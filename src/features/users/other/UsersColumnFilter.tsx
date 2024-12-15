@@ -59,7 +59,9 @@ export default function UsersColumnFilter({
 
 	if (filterVariant === 'range') {
 		return (
-			<Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+			<Box
+				data-testid='UserColumnFilter'
+				sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
 				<Autocomplete
 					freeSolo
 					fullWidth
@@ -100,6 +102,7 @@ export default function UsersColumnFilter({
 	else {
 		return (
 			<Autocomplete
+				data-testid='UserColumnFilter'
 				freeSolo
 				fullWidth
 				size='small'
@@ -123,7 +126,11 @@ export default function UsersColumnFilter({
 						formattedOption = startCase(optionValue);
 					}
 					return (
-						<Box component='li' key={key as string} {...remainingProps}>
+						<Box
+							data-testid='UserColumnFilter__option'
+							component='li'
+							key={key as string}
+							{...remainingProps}>
 							{formattedOption}
 						</Box>
 					);

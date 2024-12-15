@@ -131,7 +131,7 @@ describe('UsersTable', () => {
 		// Check headers
 		const headers = screen
 			.getAllByRole('columnheader')
-			.map((header) => getByTestId(header, 'UsersTable__headerNameText'));
+			.map((header) => getByTestId(header, 'UsersTable__headerName__Text'));
 		expect(headers).toHaveLength(13); // including "actions" column
 		expect(headers.map((header) => header.textContent)).toEqual(
 			expect.arrayContaining([

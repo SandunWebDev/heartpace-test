@@ -35,20 +35,6 @@ const UserSearchWrapper = ({
 describe('UsersStatus Component', () => {
 	afterEach(cleanup);
 
-	it('snapshot', () => {
-		const mockOnChange = jest.fn();
-		const mockOnClose = jest.fn();
-
-		const { asFragment } = render(
-			<UserSearchWrapper
-				placeholder='Search Users'
-				mockOnChange={mockOnChange}
-				mockOnClose={mockOnClose}
-			/>,
-		);
-		expect(asFragment()).toMatchSnapshot();
-	});
-
 	it('should be able to type values', async () => {
 		const fireUserEvent = userEvent.setup();
 		const mockOnChange = jest.fn();

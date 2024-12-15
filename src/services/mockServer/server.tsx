@@ -6,6 +6,8 @@ import { faker } from '@faker-js/faker';
 import { countryList } from '../../utils/countryList';
 import { preCreatedFakerUserList } from './userList';
 
+export { Server };
+
 export type Gender = 'male' | 'female' | 'other';
 export interface User {
 	id: string;
@@ -34,7 +36,7 @@ export interface SingleUserApiResponse {
 }
 
 const UserModel: ModelDefinition<User> = Model.extend({});
-type AppRegistry = Registry<
+export type AppRegistry = Registry<
 	{
 		user: typeof UserModel;
 	},
@@ -45,8 +47,10 @@ type AppSchema = Schema<AppRegistry>;
 
 const allCountryNames = countryList.map((country) => country.name);
 
-export default function createMockServer() {
+export default function createMockServer(environment?: string) {
 	return new Server({
+		environment: environment ?? 'development',
+
 		models: {
 			user: UserModel,
 		},

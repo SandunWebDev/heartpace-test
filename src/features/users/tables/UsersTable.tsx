@@ -345,7 +345,7 @@ export default function UsersTable({
 											variant='head'>
 											<Box sx={{ width: '100%' }}>
 												<Box
-													data-testid='UsersTable__headerNameText'
+													data-testid='UsersTable__headerName'
 													onClick={header.column.getToggleSortingHandler()}
 													sx={{
 														width: '100%',
@@ -355,14 +355,20 @@ export default function UsersTable({
 															? 'pointer'
 															: 'inherit',
 													}}>
-													{flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
-													{{
-														asc: ' 🔼',
-														desc: ' 🔽',
-													}[header.column.getIsSorted() as string] ?? null}
+													<Box sx={{ display: 'flex' }}>
+														<Box data-testid='UsersTable__headerName__Text'>
+															{flexRender(
+																header.column.columnDef.header,
+																header.getContext(),
+															)}
+														</Box>
+														<Box data-testid='UsersTable__headerName__SortIndicator'>
+															{{
+																asc: ' 🔼',
+																desc: ' 🔽',
+															}[header.column.getIsSorted() as string] ?? null}
+														</Box>
+													</Box>
 												</Box>
 
 												<Box>

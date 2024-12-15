@@ -12,6 +12,7 @@ export default function UsersStatus({
 }: UsersStatusProps) {
 	return (
 		<Box
+			data-testid='UsersStatus'
 			sx={{
 				display: 'inline-block',
 				border: '1.5px solid gray',

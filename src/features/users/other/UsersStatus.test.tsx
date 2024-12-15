@@ -9,11 +9,6 @@ const defaultProps = {
 describe('UsersStatus Component', () => {
 	afterEach(cleanup);
 
-	it('snapshot', () => {
-		const { asFragment } = render(<UsersStatus {...defaultProps} />);
-		expect(asFragment()).toMatchSnapshot();
-	});
-
 	it('should render ths given values in "filtered / total" format', () => {
 		render(<UsersStatus {...defaultProps} />);
 

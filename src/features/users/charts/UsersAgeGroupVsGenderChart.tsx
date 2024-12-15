@@ -20,7 +20,7 @@ import startCase from 'lodash/startCase';
 
 import { UserWithExtraData } from '../../../services/mockServer/server';
 
-const geenrateChartData = (
+const generateChartData = (
 	filteredUserRows: UserWithExtraData[],
 	colorMode: 'light' | 'dark',
 ) => {
@@ -127,7 +127,7 @@ export default function UsersAgeGroupVsGenderChart({
 	const colorMode = theme.palette.mode;
 
 	const chartData = useMemo(() => {
-		return geenrateChartData(filteredUserRows, colorMode);
+		return generateChartData(filteredUserRows, colorMode);
 	}, [filteredUserRows, colorMode]);
 
 	const [legendOpacity, setOLegendOpacity] = useState({
@@ -153,7 +153,9 @@ export default function UsersAgeGroupVsGenderChart({
 	};
 
 	return (
-		<Box style={{ height: height, width: '100%' }}>
+		<Box
+			data-testid='UsersAgeGroupVsGenderChart'
+			style={{ height: height, width: '100%' }}>
 			{title && (
 				<Typography variant='h6' gutterBottom sx={{ marginBottom: '25px' }}>
 					{title}

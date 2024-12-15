@@ -7,7 +7,7 @@ import tsEslint from 'typescript-eslint';
 import jest from 'eslint-plugin-jest';
 
 export default tsEslint.config(
-	{ ignores: ['dist'] },
+	{ ignores: ['dist', 'coverage'] },
 	{
 		extends: [
 			js.configs.recommended,

@@ -49,7 +49,7 @@ export default function ColorSchemeSelector(props: IconButtonOwnProps) {
 	}[resolvedMode];
 
 	return (
-		<React.Fragment>
+		<Box data-testid='ColorSchemeSelectorMenu'>
 			<IconButton onClick={handleClick} disableRipple size='small' {...props}>
 				{icon}
 			</IconButton>
@@ -81,6 +81,6 @@ export default function ColorSchemeSelector(props: IconButtonOwnProps) {
 					Dark
 				</MenuItem>
 			</Menu>
-		</React.Fragment>
+		</Box>
 	);
 }

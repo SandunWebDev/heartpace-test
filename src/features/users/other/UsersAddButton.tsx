@@ -28,6 +28,7 @@ export default function UsersAddButton() {
 					marginLeft: 'auto',
 				}}>
 				<Fab
+					aria-label='Add User'
 					color='primary'
 					onClick={() => {
 						setAddUserFormDialogOpenStatus(true);

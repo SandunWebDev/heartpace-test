@@ -71,7 +71,7 @@ export interface UsersAgeGroupVsGenderChartProps {
 	filteredUserRows: UserWithExtraData[];
 }
 
-export default function UsersAgeGroupVsGenderChart({
+export default function UsersCountryChart({
 	title,
 	height = '500px',
 	filteredUserRows,
@@ -105,7 +105,9 @@ export default function UsersAgeGroupVsGenderChart({
 	};
 
 	return (
-		<Box style={{ height: height, width: '100%' }}>
+		<Box
+			data-testid='UsersCountryChart'
+			style={{ height: height, width: '100%' }}>
 			<Typography variant='h6' gutterBottom>
 				{title}
 			</Typography>

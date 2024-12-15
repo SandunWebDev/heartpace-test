@@ -245,9 +245,15 @@ export default function AddEditUserFormDialog({
 										required
 										disabled={isSubmitting}
 										size='small'>
-										<MenuItem value={'male'}>Male</MenuItem>
-										<MenuItem value={'female'}>Female</MenuItem>
-										<MenuItem value={'other'}>Other</MenuItem>
+										<MenuItem data-testid='gender__option' value={'male'}>
+											Male
+										</MenuItem>
+										<MenuItem data-testid='gender__option' value={'female'}>
+											Female
+										</MenuItem>
+										<MenuItem data-testid='gender__option' value={'other'}>
+											Other
+										</MenuItem>
 									</FormikTextField>
 								</Box>
 
@@ -332,7 +338,7 @@ export default function AddEditUserFormDialog({
 										disabled={isSubmitting}
 										size='small'>
 										{countryList.map((country, index) => (
-											<MenuItem key={index} value={country.name}>
+											<MenuItem data-testid="country__option" key={index} value={country.name}>
 												{country.emoji} {country.name}
 											</MenuItem>
 										))}
