@@ -7,16 +7,16 @@
 		"dev": "vite",
 		"build": "tsc -b && vite build",
 		"preview": "vite preview",
-		"lint": "npm run tsc && npm run lint:eslint && npm run lint:prettier",
-		"lint:eslint": "eslint .",
-		"lint:eslint-fix": "eslint . --fix",
-		"lint:prettier": "prettier --check .",
-		"lint:prettier-fix": "prettier --write .",
 		"tsc": "tsc -b",
 		"tsc:watch": "tsc -b --watch",
 		"test": "NODE_NO_WARNINGS=1 jest",
 		"test:watch": "NODE_NO_WARNINGS=1 jest --watch",
-		"test:coverage": "NODE_NO_WARNINGS=1 jest --coverage"
+		"test:coverage": "NODE_NO_WARNINGS=1 jest --coverage",
+		"lint": "npm run tsc && npm run lint:eslint && npm run lint:prettier",
+		"lint:eslint": "eslint .",
+		"lint:eslint-fix": "eslint . --fix",
+		"lint:prettier": "prettier --check .",
+		"lint:prettier-fix": "prettier --write ."
 	},
 	"dependencies": {
 		"@emotion/react": "^11.13.5",
