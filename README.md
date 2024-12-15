@@ -10,7 +10,7 @@ This is a minimal dashboard application created as part of the take-home test fo
 
 ### Main Packages Used
 
-- Reac
+- React
 - TypeScript
 - Redux
 - MaterialUI
