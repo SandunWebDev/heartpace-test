@@ -338,7 +338,10 @@ export default function AddEditUserFormDialog({
 										disabled={isSubmitting}
 										size='small'>
 										{countryList.map((country, index) => (
-											<MenuItem data-testid="country__option" key={index} value={country.name}>
+											<MenuItem
+												data-testid='country__option'
+												key={index}
+												value={country.name}>
 												{country.emoji} {country.name}
 											</MenuItem>
 										))}

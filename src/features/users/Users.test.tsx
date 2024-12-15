@@ -11,79 +11,12 @@ import {
 	waitFor,
 	within,
 } from '../../configs/jest/testUtils';
-import { User } from '../../services/mockServer/server';
+import { mockUserList } from '../../services/mockServer/userList';
 import createMockServer, {
 	Server,
 	AppRegistry,
 } from '../../services/mockServer/server';
 import Users from './Users';
-
-const mockUserList: User[] = [
-	{
-		id: '8b986a7e-f6c8-49e1-910d-cdfc7c1a2f86',
-		firstName: 'Nicolas',
-		lastName: 'Mitchell',
-		country: 'Marshall Islands',
-		city: 'Michealstead',
-		address: '7654 Kertzmann Tunnel',
-		email: 'Nicolas_Mitchell@yahoo.com',
-		phone: '(855) 900-0878',
-		jobTitle: 'Legacy Communications Designer',
-		birthDate: new Date('1978-07-12T16:03:54.090Z'),
-		gender: 'male',
-	},
-	{
-		id: '6b042125-686a-43e0-8a68-23cf5bee102e',
-		firstName: 'Monica',
-		lastName: 'Abbott',
-		country: 'Iran',
-		city: 'Minatown',
-		address: '7031 Christy Grove',
-		email: 'Monica_Abbott0@yahoo.com',
-		phone: '(570) 410-1335',
-		jobTitle: 'Legacy Solutions Specialist',
-		birthDate: new Date('1970-03-24T03:31:38.977Z'),
-		gender: 'female',
-	},
-	{
-		id: '60866539-4498-4282-9cd7-d18161293135',
-		firstName: 'Amanda',
-		lastName: 'Lowe',
-		country: 'Italy',
-		city: 'Aldenstad',
-		address: '1544 Connor Pass',
-		email: 'Amanda.Lowe54@yahoo.com',
-		phone: '(651) 617-8480',
-		jobTitle: 'Lead Infrastructure Administrator',
-		birthDate: new Date('1971-06-03T17:07:13.353Z'),
-		gender: 'female',
-	},
-	{
-		id: '8b48ee23-0707-4a4a-b908-464b728c436e',
-		firstName: 'Nelson',
-		lastName: 'Greenfelder',
-		country: 'Martinique',
-		city: 'Melissaboro',
-		address: '7258 Center Road',
-		email: 'Nelson_Greenfelder@yahoo.com',
-		phone: null,
-		jobTitle: 'International Response Analyst',
-		birthDate: new Date('1978-08-27T07:55:45.607Z'),
-		gender: 'male',
-	},
-	{
-		id: 'f8fbb3f0-46c3-4df2-a906-0f6fcd2192b6',
-		firstName: 'Julio',
-		lastName: 'Wiza',
-		country: 'Virgin Islands (British)',
-		city: 'Mesquite',
-		address: '597 E 12th Street',
-		email: 'Julio_Wiza@hotmail.com',
-		phone: '(597) 810-6174',
-		birthDate: new Date('2004-11-15T19:51:14.094Z'),
-		gender: 'other',
-	},
-];
 
 describe('Users', () => {
 	let server: Server<AppRegistry>;

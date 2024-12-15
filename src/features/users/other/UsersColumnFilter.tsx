@@ -13,7 +13,7 @@ export default function UsersColumnFilter({
 }: {
 	column: Column<any, unknown>;
 }) {
-	const { filterVariant } = column.columnDef.meta ?? {};
+	const { filterVariant } = column.columnDef?.meta ?? {};
 
 	const columnFilterValue = column.getFilterValue();
 
@@ -109,8 +109,8 @@ export default function UsersColumnFilter({
 				value={columnFilterValue ?? ''}
 				options={sortedUniqueValues}
 				renderOption={(props, option) => {
-					// This is needed beacuse we need to show "birthDate" column value in easy human readable format.
-					// Don't use similar "getOptionLabel" for this. Beacuse it add bugs to search result.
+					// This is needed because we need to show "birthDate" column value in easy human readable format.
+					// Don't use similar "getOptionLabel" for this. Because it add bugs to search result.
 
 					// eslint-disable-next-line react/prop-types
 					const { key, ...remainingProps } = props;

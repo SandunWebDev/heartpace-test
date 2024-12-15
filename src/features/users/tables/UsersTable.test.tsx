@@ -9,7 +9,6 @@ import {
 	getByRole,
 	getAllByRole,
 } from '../../../configs/jest/testUtils';
-import UsersTable, { UsersTableProps } from './UsersTable';
 import { User, UserWithExtraData } from '../../../services/mockServer/server';
 import { initialPreloadedState } from '../../../services/redux/store';
 import {
@@ -21,48 +20,10 @@ import {
 	usersActions,
 	usersSelectors,
 } from '../../../services/redux/slices/users/usersSlice';
+import { mockUserList as allMockUserList } from '../../../services/mockServer/userList';
+import UsersTable, { UsersTableProps } from './UsersTable';
 
-const mockUserList: User[] = [
-	{
-		country: 'Marshall Islands',
-		city: 'Michealstead',
-		address: '7654 Kertzmann Tunnel',
-		lastName: 'Mitchell',
-		firstName: 'Nicolas',
-		email: 'Nicolas_Mitchell@yahoo.com',
-		phone: '(855) 900-0878',
-		jobTitle: 'Legacy Communications Designer',
-		birthDate: new Date('1978-07-09T12:03:30.048Z'),
-		gender: 'male',
-		id: '8b986a7e-f6c8-49e1-910d-cdfc7c1a2f86',
-	},
-	{
-		country: 'Iran',
-		city: 'Minatown',
-		address: '7031 Christy Grove',
-		lastName: 'Abbott',
-		firstName: 'Monica',
-		email: 'Monica_Abbott0@yahoo.com',
-		phone: '(570) 410-1335',
-		jobTitle: 'Legacy Solutions Specialist',
-		birthDate: new Date('1970-03-20T23:31:14.935Z'),
-		gender: 'female',
-		id: '6b042125-686a-43e0-8a68-23cf5bee102e',
-	},
-	{
-		country: 'Italy',
-		city: 'Aldenstad',
-		address: '1544 Connor Pass',
-		lastName: 'Lowe',
-		firstName: 'Amanda',
-		email: 'Amanda.Lowe54@yahoo.com',
-		phone: '(651) 617-8480',
-		jobTitle: 'Lead Infrastructure Administrator',
-		birthDate: new Date('1971-05-31T13:06:49.312Z'),
-		gender: 'female',
-		id: '60866539-4498-4282-9cd7-d18161293135',
-	},
-];
+const mockUserList: User[] = allMockUserList.slice(0, 3);
 
 const initialReduxState = {
 	...initialPreloadedState,

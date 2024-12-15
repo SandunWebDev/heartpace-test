@@ -17,7 +17,7 @@ import countryList from 'country-locale-map';
 
 import { UserWithExtraData } from '../../../services/mockServer/server';
 
-const geenrateChartData = (
+const generateChartData = (
 	filteredUserRows: UserWithExtraData[],
 	colorMode: 'light' | 'dark',
 ) => {
@@ -46,21 +46,23 @@ const geenrateChartData = (
 		],
 	};
 
-	const userListByContinet = filteredUserRows.reduce(
+	const userListByContinent = filteredUserRows.reduce(
 		(acc, user) => {
 			const country = user.country;
 			const countryData = countryList.getCountryByName(country, true);
-			const countryContinet = countryData?.continent ?? 'Other';
+			const countryContinent = countryData?.continent ?? 'Other';
 
 			return {
 				...acc,
-				[countryContinet]: acc[countryContinet] ? acc[countryContinet] + 1 : 1,
+				[countryContinent]: acc[countryContinent]
+					? acc[countryContinent] + 1
+					: 1,
 			};
 		},
 		{} as Record<string, number>,
 	);
 
-	return Object.entries(userListByContinet).map(([key, count], index) => {
+	return Object.entries(userListByContinent).map(([key, count], index) => {
 		return { name: key, value: count, color: colors[colorMode][index] };
 	});
 };
@@ -81,7 +83,7 @@ export default function UsersCountryChart({
 	const colorMode = theme.palette.mode;
 
 	const chartData = useMemo(() => {
-		return geenrateChartData(filteredUserRows, colorMode);
+		return generateChartData(filteredUserRows, colorMode);
 	}, [filteredUserRows, colorMode]);
 
 	const [legendOpacity, setOLegendOpacity] = useState<Record<string, number>>(
@@ -105,9 +107,7 @@ export default function UsersCountryChart({
 	};
 
 	return (
-		<Box
-			data-testid='UsersCountryChart'
-			style={{ height: height, width: '100%' }}>
+		<Box data-testid='UsersCountryChart' sx={{ height: height, width: '100%' }}>
 			<Typography variant='h6' gutterBottom>
 				{title}
 			</Typography>
