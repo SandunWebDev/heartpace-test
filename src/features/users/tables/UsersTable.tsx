@@ -23,9 +23,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { differenceInYears } from 'date-fns';
 import startCase from 'lodash/startCase';
 
+import { getUserListWithAddiData } from '../../../services/redux/slices/users/usersTransformers';
 import { User, UserWithExtraData } from '../../../services/mockServer/server';
 import AddEditUserFormDialog from '../forms/AddEditUserFormDialog';
 import DeleteUserFormDialog from '../forms/DeleteUserFormDialog';
@@ -61,13 +61,7 @@ export default function UsersTable({
 
 	// Adding some additional calculated properties. (age)
 	const userListWithAddiData: UserWithExtraData[] = useMemo(() => {
-		return userList.map((item) => {
-			const birthDate = new Date(item.birthDate);
-			const todayDate = new Date();
-			const age = differenceInYears(todayDate, birthDate);
-
-			return { ...item, age };
-		});
+		return getUserListWithAddiData(userList);
 	}, [userList]);
 
 	const columns = useMemo<ColumnDef<UserWithExtraData>[]>(

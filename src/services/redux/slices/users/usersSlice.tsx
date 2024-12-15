@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import type { FetchStatus } from '../../types';
 import { User, UserWithExtraData } from '../../../mockServer/server';
+import { getUserListWithAddiData } from './usersTransformers';
 import * as asyncUsersActions from './usersActions';
 import * as allUsersSelectors from './usersSelectors';
 
@@ -64,6 +65,7 @@ export const usersSlice = createSlice({
 			.addCase(getAllUsers.fulfilled, (state, action) => {
 				state.getAllUsersReqStatus = 'IDLE';
 				state.userList = action.payload;
+				state.filteredUserList = getUserListWithAddiData(action.payload);
 			})
 			.addCase(getAllUsers.rejected, (state, action) => {
 				state.getAllUsersReqStatus = 'ERROR';
