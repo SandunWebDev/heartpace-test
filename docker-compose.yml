@@ -1,0 +1,8 @@
+services:
+  heartpace_test:
+    build: .
+    image: heartpace_test
+    container_name: heartpace_test
+    restart: unless-stopped
+    ports:
+      - "80:80"
