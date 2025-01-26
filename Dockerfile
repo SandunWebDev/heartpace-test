@@ -5,6 +5,9 @@ WORKDIR /app
 
 COPY package*.json ./
 
+# Increase the memory limit for the build process, (In case we are doing build in a low memory VM)
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
 RUN npm install
 
 COPY . .
